@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DTC CZ 校准 · 实验操作手册</title>
+<style>
+  :root{
+    --bg:#070b18; --bg2:#0c1226; --card:#111a33; --card2:#0e1730;
+    --line:#22304f; --txt:#e8eefc; --dim:#93a4c8; --dim2:#6f80a6;
+    --cy:#22d3ee; --vi:#a78bfa; --am:#fbbf24; --gr:#34d399; --rd:#fb7185; --or:#fb923c;
+    --mono:"JetBrains Mono","Consolas","SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1100px 620px at 12% -8%, #16305c55, transparent 60%),
+      radial-gradient(900px 520px at 92% 4%, #3b1d6b55, transparent 60%),
+      linear-gradient(180deg,#070b18,#070b18 40%,#080d1d);
+    color:var(--txt);
+    font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+  a{color:var(--cy);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+      background:#070b18d9;border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;gap:4px;align-items:center;overflow-x:auto;padding:0 16px;height:52px}
+  nav .brand{font-weight:700;letter-spacing:.5px;color:var(--cy);white-space:nowrap;margin-right:14px;font-size:15px}
+  nav a.nl{color:var(--dim);font-size:13.5px;padding:5px 10px;border-radius:8px;white-space:nowrap}
+  nav a.nl:hover{color:#fff;background:#1a2547;text-decoration:none}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:64px 0 46px;position:relative;overflow:hidden}
+  .kicker{color:var(--cy);font-size:13px;letter-spacing:3px;font-weight:600;text-transform:uppercase}
+  h1{font-size:clamp(28px,4.4vw,50px);line-height:1.18;margin:12px 0 14px;font-weight:800;
+     background:linear-gradient(100deg,#fff 20%,#7dd3fc 55%,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);font-size:16.5px;max-width:900px}
+  .cite{margin-top:16px;font-size:13px;color:var(--dim2)}
+  .cite code{font-family:var(--mono);color:#a5b4fc;background:#151f3d;padding:2px 7px;border-radius:6px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:34px}
+  .kpi{background:linear-gradient(160deg,#131e3c,#0d1530);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .kpi b{display:block;font-size:27px;font-weight:800;letter-spacing:-.5px}
+  .kpi span{color:var(--dim);font-size:12.5px}
+  .kpi.k1 b{color:var(--cy)} .kpi.k2 b{color:var(--gr)} .kpi.k3 b{color:var(--vi)} .kpi.k4 b{color:var(--am)}
+
+  /* ---------- sections ---------- */
+  section{padding:44px 0 8px;scroll-margin-top:66px}
+  .sec-h{display:flex;align-items:center;gap:12px;margin:0 0 6px}
+  .sec-n{font-family:var(--mono);font-size:12px;color:#0b1020;background:var(--cy);border-radius:6px;padding:2px 8px;font-weight:700}
+  .sec-h h2{font-size:24px;margin:0;font-weight:750}
+  .sec-p{color:var(--dim);font-size:14.5px;margin:0 0 20px;max-width:960px}
+  .card{background:linear-gradient(170deg,#101830,#0b1330);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:16px 0}
+  .card.tight{padding:16px 18px}
+  .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+  @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+  h3{font-size:16.5px;margin:22px 0 10px;font-weight:700}
+  h3:first-child{margin-top:0}
+  h4{font-size:14.5px;margin:16px 0 8px;color:#cbd5f5;font-weight:700}
+  p{margin:8px 0}
+  ul,ol{margin:8px 0;padding-left:22px}
+  li{margin:4px 0;font-size:14.5px}
+  small,.sm{font-size:12.5px;color:var(--dim2)}
+  .note{background:#0f1c3a;border-left:3px solid var(--cy);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px;color:#cfe0ff;margin:12px 0}
+  .note.warn{border-color:var(--am);background:#2a1f0a;color:#ffe9b8}
+  .note.ok{border-color:var(--gr);background:#08231b;color:#bdf5e0}
+  .note.info{border-color:var(--vi);background:#1a1338;color:#e0d7ff}
+  code{font-family:var(--mono)}
+
+  figure{margin:14px 0;background:#0a1129;border:1px solid var(--line);border-radius:14px;padding:12px 12px 8px}
+  figure svg{width:100%;height:auto;display:block}
+  figcaption{font-size:12.5px;color:var(--dim2);padding:8px 6px 2px;border-top:1px dashed #1d2a4a;margin-top:8px}
+  figcaption b{color:#9fd7ff}
+
+  /* ---------- pipeline ---------- */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 6px}
+  @media(max-width:980px){.flow{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.flow{grid-template-columns:1fr}}
+  .step{position:relative;background:linear-gradient(165deg,#131f3e,#0c1530);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+  .step .n{font-family:var(--mono);font-size:11px;color:#0a1020;background:var(--vi);display:inline-block;border-radius:5px;padding:1px 7px;font-weight:700}
+  .step h5{margin:8px 0 6px;font-size:14.5px;font-weight:700}
+  .step p{margin:0;font-size:12.5px;color:var(--dim)}
+  .step .tag{position:absolute;top:-9px;right:10px;font-size:10.5px;font-family:var(--mono);background:#0a1020;border:1px solid var(--line);border-radius:20px;padding:1px 8px;color:var(--am)}
+  .step.g1{border-color:#1e3a5f}.step.g2{border-color:#1b3f4a}.step.g3{border-color:#3b2f63}
+  .step.g4{border-color:#4a3a1c}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+  th,td{border:1px solid #1e2a49;padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#0f1a36;color:#a9c6ff;font-weight:600}
+  td.num,th.num{text-align:right;font-family:var(--mono)}
+  tbody tr:nth-child(even){background:#0a1026}
+  .tw{overflow-x:auto}
+
+  /* ---------- chips / eq ---------- */
+  .eq{font-family:var(--mono);background:#0a1330;border:1px solid #1d2b4d;border-radius:10px;padding:11px 13px;
+      font-size:13px;color:#dbeafe;margin:9px 0;white-space:normal;word-break:break-word;
+      overflow-wrap:anywhere;line-height:1.85}
+  .eq b{color:var(--am);font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .chip{font-size:12px;font-family:var(--mono);background:#101c3c;border:1px solid #23325a;color:#c7d8ff;border-radius:20px;padding:3px 11px}
+  .chip.hot{background:#2a1a08;border-color:#5a3f10;color:#fcd34d}
+  .chip.ok{background:#08231b;border-color:#14503c;color:#6ee7b7}
+
+  /* ---------- toast/labels for svg ---------- */
+  svg text{font-family:system-ui,"Microsoft YaHei",sans-serif}
+  .axis{stroke:#2b3a5e;stroke-width:1}
+  .grid{stroke:#1a2440;stroke-width:1}
+  .lbl{fill:#8ea3cc;font-size:11px}
+  .lbl2{fill:#6f80a6;font-size:10px}
+  .ttl{fill:#cfe0ff;font-size:12px;font-weight:600}
+  .anno{fill:#7dd3fc;font-size:10.5px}
+
+  footer{margin:52px 0 0;padding:26px 0 40px;border-top:1px solid var(--line);color:var(--dim2);font-size:12.5px}
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:100;
+    background:linear-gradient(90deg,var(--cy),var(--vi),var(--am));transition:width .15s ease-out}
+  .top{position:fixed;right:20px;bottom:22px;background:#131f3e;border:1px solid var(--line);color:#cfe0ff;
+       border-radius:10px;padding:9px 13px;font-size:12px;cursor:pointer;opacity:0;pointer-events:none;
+       transition:opacity .25s;z-index:90}
+  .top.on{opacity:1;pointer-events:auto}
+  .top:hover{background:#1b2a52}
+  nav a.nl.active{color:#fff;background:#1c2b52;box-shadow:inset 0 -2px 0 var(--cy)}
+  details summary::-webkit-details-marker{display:none}
+  .copybtn{float:right;font-family:var(--mono);font-size:11px;background:#17234a;border:1px solid var(--line);
+    color:#9fd7ff;border-radius:6px;padding:1px 8px;cursor:pointer}
+  .copybtn:hover{background:#22325f}
+
+  .opcard{border-top:3px solid var(--cy)}
+  .opcard dt{color:var(--cy);font-weight:650;margin-top:14px}
+  .opcard dd{margin:3px 0 12px;color:var(--txt)}
+  .opcard .accept{border-left:3px solid var(--gr);padding:10px 14px;background:#09231e;border-radius:6px}
+  .seq{overflow-x:auto}.seq svg{min-width:680px;width:100%;height:auto}
+  .route{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.route a{padding:8px 12px;border:1px solid var(--line);border-radius:8px}
+  details.reference>summary{cursor:pointer;padding:22px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:20px;color:var(--cy)}
+  .reference{margin:40px 0}.reference[open]>summary{margin-bottom:20px}
+  .checklist label{display:block;padding:8px 0}.checklist input{margin-right:10px;accent-color:var(--gr)}
+  @media print{nav,.top{display:none}body{background:white;color:#111}.card,.note{background:white;color:#111}.opcard dd{color:#111}details.reference:not([open]){display:none}}
+</style>
+</head>
+<body>
+<div class="wrap note"><b>新手入口：</b><a href="CZ校准入门手册.md">CZ 校准入门手册</a> · <a href="教程勘误.md">核对与勘误</a>。本页数值是论文案例，曲线为示意。操作区提供条件 Ramsey 序列；JAZZ 的完整回波编程须对照原文 Fig. 2(a)。QPT 迹保持是重建约束，不能证明无泄漏。</div>
+
+<div class="progress" id="progress"></div>
+
+<nav><div class="wrap"><span class="brand">◆ CZ 实验操作手册</span><a class="nl" href="#bench">准备</a><a class="nl" href="#op0">读出 / XY</a><a class="nl" href="#op1">idle</a><a class="nl" href="#op2">失真</a><a class="nl" href="#op3">CZ</a><a class="nl" href="#op4">VZ</a><a class="nl" href="#op5">验证</a><a class="nl" href="#handoff">记录 / 排错</a><a class="nl" href="#research">论文参考</a></div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">Calibration Playbook · 从测量到验收</div>
+  <h1>DTC CZ 门校准<br>实验操作手册</h1>
+  <p class="sub">从读出和单比特粗标开始，找到 idle，纠正磁通失真，再校条件相位与 VZ。每一步明确固定什么、扫描什么、测什么，以及何时进入下一步。先得到可重复的 CZ，再提高精度。</p>
+  <p class="cite">
+    整理自 Rui Li, K. Kubo, Y. Ho, Z. Yan, Y. Nakamura, H. Goto,
+    <i>Realization of High-Fidelity CZ Gate Based on a Double-Transmon Coupler</i>,
+    <b>Phys. Rev. X 14, 041050 (2024)</b> · DOI 10.1103/PhysRevX.14.041050 ·
+    本地文档 <code>docs/DTC_CZ校准方案总结.md</code>
+  </p>
+
+  <div class="kpis">
+    <div class="kpi k1"><b>99.90%</b><span>论文案例：平均保真度 (±0.01%)</span></div>
+    <div class="kpi k2"><b>48 ns</b><span>论文案例：门长（含零 padding）</span></div>
+    <div class="kpi k3"><b>1.3×10⁴</b><span>论文案例：ZZ on/off 比</span></div>
+    <div class="kpi k4"><b>12 h</b><span>论文：CZ 固定，单比特每次重标</span></div>
+  </div>
+
+  <div class="note" style="margin-top:22px">
+    <b>关于本页图形：</b>布局与波形为按论文所述机制<b>重绘的示意图</b>；标注带数值的点（ZZ 极值、残差、门保真度、
+    瞬态参数、相干时间等）均取自论文原文。曲线形状用于表达趋势，不代表原始实验数据点。
+  </div>
+</div></header>
+
+<main class="wrap">
+<section id="bench"><div class="sec-h"><span class="sec-n">开始</span><h2>实验台前：确认范围与约定</h2></div>
+<div class="note">本页面向 DTC。操作建议与论文案例分开；当前仓库没有仪器驱动或本机数据。数值扫描范围、shots、复位时间和误差门槛需要按自己的设备确定，论文的 0.309 / 48 ns 不是默认配置。</div>
+<div class="grid2"><div class="card"><h3>链路与状态</h3><ul><li>同步两比特 XY、读出和耦合器快速磁通触发，确认相对延迟。</li><li>dc 线圈偏置与快速磁通分开；&lt;1.6 kHz 低通属于 dc 线路。</li><li>先确认可用能谱范围及幅度边界，记录 V ↔ 磁通换算。系统带宽和 AWG 采样率是不同的量。</li><li>每次 shot 都复位或等待，并用残余激发与尾部相位确认等待足够；读出发生在门完成后。</li></ul></div>
+<div class="card"><h3>统一单位与相位</h3><ul><li>基底顺序：|00⟩、|01⟩、|10⟩、|11⟩，第一位是 Q1。</li><li>ζ 用 rad/s 时 θ<sub>CZ</sub>=−∫ζdt；ZZ 用 Hz 时加 2π。E 用能量时 ζ=(E₁₁−E₁₀−E₀₁+E₀₀)/ℏ。</li><li>用已知帧更新测 Ramsey，验证驱动帧符号及 rad/degree，再做 VZ。</li><li>扫描分析相位拟合 P=A+B cos(α+φ)；φ 的符号依赖分析脉冲约定，报告时保持一致。</li></ul></div></div>
+<div class="route"><a href="#op0">0 粗标</a><a href="#op1">1 idle → XY 精标</a><a href="#op2">2 失真 → 回 idle</a><a href="#op3">3 CZ</a><a href="#op4">4 VZ</a><a href="#op5">5 独立验证</a></div>
+<p>每一步保存可回退版本。改变 idle / 滤波链路后复核下游步骤；改变 Z 波形或门长后重校 VZ。先粗扫确定连续分支，再局部精扫；将参考点穿插在扫描中，用它识别漂移。</p></section><section id="op0"><div class="sec-h"><span class="sec-n">实验</span><h2>0 · 读出与 XY 粗标</h2></div><div class="card opcard"><dl><dt>进入前</dt><dd>确认触发、复位和读出链路可用。</dd><dt>固定项</dt><dd>当前粗偏置、脉冲时序；每次只调一类参数。</dd><dt>扫描项与执行顺序</dt><dd>读出频率/功率 → 制备 |0⟩/|1⟩ 的单发 IQ → 频谱 → Rabi → Ramsey → DRAG。</dd><dt>测量与参考</dt><dd>保存 IQ 与每个制备态的计数；聚类后把簇对应到物理态。泄漏测量需另加 |2⟩ 分类。</dd><dt>处理与产出</dt><dd>保存 M[i,j]=P(判为 i | 制备 j)、频率、π/π/2 幅度、DRAG 和帧约定。矩阵含制备误差，修正概率时应约束为合法分布。</dd></dl><p class="accept"><b>通过条件：</b>能够重复制备 |0⟩/|1⟩，Ramsey 可见度足够且拟合稳定；此处只是粗标。</p><p><b>未通过先查：</b>残余激发、读出诱导跃迁、分类簇标签、触发延迟。</p></div></section><section id="op1"><div class="sec-h"><span class="sec-n">实验</span><h2>1 · 扫 dc 找 idle，再精标单比特</h2></div><div class="card opcard"><div class="seq"><svg viewBox="0 0 900 210" role="img" aria-label="两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同"><title>两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同</title><text x="12" y="47" fill="#e8eefc" font-size="16">Q1</text><line x1="95" y1="42" x2="840" y2="42" stroke="#496184"/><rect x="260" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="300.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2</text><rect x="370" y="23" width="160" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="450.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">等待 τ</text><rect x="580" y="23" width="120" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="640.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2(α)</text><rect x="760" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="112" fill="#e8eefc" font-size="16">Q2</text><line x1="95" y1="107" x2="840" y2="107" stroke="#496184"/><rect x="100" y="88" width="130" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="165.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">制备 c=0/1</text><rect x="260" y="88" width="440" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="480.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">保持 c（同一总时长）</text><rect x="760" y="88" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="175" fill="#93a4c8" font-size="14">两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同</text></svg></div><dl><dt>进入前</dt><dd>两比特 π/π/2 已粗标，已知 dc 扫描范围。</dd><dt>固定项</dt><dd>每个偏置点两组采用相同探针驱动频率、分析轴、等待 τ 网格。</dd><dt>扫描项与执行顺序</dt><dd>外层扫 dc；每点 Q2=c=0/1 各做 Q1 Ramsey 的 τ 扫描。先粗后细；候选点重复测量。</dd><dt>测量与参考</dt><dd>测 Q1 振荡，用双正交分析或已知分析相位确定频率符号；必要时交换探针方向。Q2 的 T₁ 会影响 c=1 组，等待范围应兼顾信号与弛豫。</dd><dt>处理与产出</dt><dd>拟合衰减振荡，f_ZZ=f_probe(c=1)−f_probe(c=0)。得到 dc–ZZ 曲线、不确定度及候选点的相干性。小于分辨率只报范围；需要更高灵敏度时按论文 Fig. 2(a) 实现完整 JAZZ 回波。</dd></dl><p class="accept"><b>通过条件：</b>空闲条件相位 2π|f_ZZ|τ_idle 满足自己的预算。选定 idle 后重标 XY 频率/幅度/DRAG，并用单独及同时 RB 检查。</p><p><b>未通过先查：</b>把单条 Ramsey 频率当 ZZ、符号不确定、c=1 组弛豫、dc 漂移。原文 ζ=2(ω_m−ω_b) 不能套到本图的 τ。</p></div></section><section id="op2"><div class="sec-h"><span class="sec-n">实验</span><h2>2 · 分时段测失真，验证预畸变</h2></div><div class="card opcard"><div class="seq"><svg viewBox="0 0 900 210" role="img" aria-label="短期失真：只扫关断后等待 t；无脉冲参考采用相同总时长"><title>短期失真：只扫关断后等待 t；无脉冲参考采用相同总时长</title><text x="12" y="47" fill="#e8eefc" font-size="16">Q2</text><line x1="95" y1="42" x2="840" y2="42" stroke="#496184"/><rect x="100" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="140.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2</text><rect x="370" y="23" width="130" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="435.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">等待 t</text><rect x="560" y="23" width="100" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="610.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">分析 X/Y</text><rect x="730" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="770.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="112" fill="#e8eefc" font-size="16">DTC</text><line x1="95" y1="107" x2="840" y2="107" stroke="#496184"/><rect x="220" y="88" width="130" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="285.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">小幅短方波</text><text x="12" y="175" fill="#93a4c8" font-size="14">短期失真：只扫关断后等待 t；无脉冲参考采用相同总时长</text></svg></div><dl><dt>进入前</dt><dd>找出磁通灵敏且相干性可用的传感点；确认小脉冲不跨入未表征区。</dd><dt>固定项</dt><dd>短期：方波幅度/长度固定；长期：长方波及 Ramsey 探测窗固定。</dd><dt>扫描项与执行顺序</dt><dd>短期按图扫关断后 t；长期先在基态打长方波 → 等待 t → π/2 → 固定探测窗 → X/Y 分析。两种实验分别覆盖可辨识的时间尺度。</dd><dt>测量与参考</dt><dd>测 X/Y 分量、解缠相位，扣除相同总时长的无脉冲参考。长等待在制备叠加态之前，避免让叠加态持续整个等待。</dd><dt>处理与产出</dt><dd>按对应积分窗口拟合多指数响应，保存参数及残差；用 AWG 的实际滤波定义转为补偿设置。检查上传波形过冲、饱和、端点与触发。</dd></dl><p class="accept"><b>通过条件：</b>相同序列下尾部残差下降；换幅度、长度和重复间隔仍有效。完成后返回 idle，复核频率与 XY。</p><p><b>未通过先查：</b>相位解缠错误、参考失谐、触发偏移、参数不可辨识、滤波定义不匹配；不能直接复制论文 Table V。</p></div></section><section id="op3"><div class="sec-h"><span class="sec-n">实验</span><h2>3 · 固定门长，粗标再精调 CZ</h2></div><div class="card opcard"><div class="seq"><svg viewBox="0 0 900 275" role="img" aria-label="扫 α：逐个候选幅度测两组 fringe；参考实验去掉 Z 波形但保持总时长"><title>扫 α：逐个候选幅度测两组 fringe；参考实验去掉 Z 波形但保持总时长</title><text x="12" y="47" fill="#e8eefc" font-size="16">Q1</text><line x1="95" y1="42" x2="840" y2="42" stroke="#496184"/><rect x="260" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="300.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2</text><rect x="370" y="23" width="160" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="450.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">等待 / 参考</text><rect x="580" y="23" width="120" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="640.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2(α)</text><rect x="760" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="112" fill="#e8eefc" font-size="16">Q2</text><line x1="95" y1="107" x2="840" y2="107" stroke="#496184"/><rect x="100" y="88" width="130" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="165.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">制备 c=0/1</text><rect x="760" y="88" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="177" fill="#e8eefc" font-size="16">DTC</text><line x1="95" y1="172" x2="840" y2="172" stroke="#496184"/><rect x="370" y="153" width="160" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="450.0" y="177" text-anchor="middle" fill="#e8eefc" font-size="15">固定 Z 波形</text><text x="12" y="240" fill="#93a4c8" font-size="14">扫 α：逐个候选幅度测两组 fringe；参考实验去掉 Z 波形但保持总时长</text></svg></div><dl><dt>进入前</dt><dd>idle 与 XY 精标完成，失真补偿已验证；能测高能级占据。</dd><dt>固定项</dt><dd>初始平滑波形形状、总门长、滤波配置和 idle；先不优化 VZ。</dd><dt>扫描项与执行顺序</dt><dd>外层粗扫 Z 幅度；每幅度依次测 c=0/1 两组分析相位 α。对连续 θ_CZ≈π 分支局部细扫，再增加重复序列灵敏度。</dd><dt>测量与参考</dt><dd>两条条件 Ramsey fringe 的相位差给 θ_CZ，约定符号后解缠。交换 Q1/Q2 复核，同时测可见度及 |2⟩ / 耦合器激发。无 Z 参考保持相同总时间。</dd><dt>处理与产出</dt><dd>保存幅度–相位/可见度/泄漏曲线。精调可少参数扫描；进阶按 Fig. 13(a/b) 使用完整 JAZZ-N / JAZZ2-N。低 N 定分支、高 N 精调，最后回低 N 复核。PPO 是可选工具，20 控制点并非通用配置。</dd></dl><p class="accept"><b>通过条件：</b>独立条件 Ramsey 的相位差接近 π，可见度未明显塌陷且泄漏符合预算。完整采样波形在边界内，三次样条无越界过冲。</p><p><b>未通过先查：</b>高 N 多峰误选、相位绕转、非绝热泄漏、长尾与复位不足。单点高存活概率不等于单门保真度。</p></div></section><section id="op4"><div class="sec-h"><span class="sec-n">实验</span><h2>4 · 冻结 Z 波形，分别校两个 VZ</h2></div><div class="card opcard"><dl><dt>进入前</dt><dd>最终 Z 波形已选定，分析相位正号与软件帧正号已验证。</dd><dt>固定项</dt><dd>Z 波形、门长、idle、XY；只改变两个帧补偿角。</dd><dt>扫描项与执行顺序</dt><dd>测 Q1 时 Q2=0，测 Q2 时 Q1=0；各扫末端分析相位，有/无 Z 波形保持同一总时长。用测得附加相位作初值，再做局部 VZ 二维扫描或 RB 目标微调。</dd><dt>测量与参考</dt><dd>参考扣除驱动失谐；应用补偿后重测两个方向、两种控制态。需要回波参考时按原文 Fig. 14(a) 的定义实现。</dd><dt>处理与产出</dt><dd>本页对角相位约定下局域项为 φ₁₀−φ₀₀、φ₀₁−φ₀₀。软件 VZ 参数依赖帧定义；论文 θᵢ/2 的斜率不能直接当任意 SDK 的 RZ 角。</dd></dl><p class="accept"><b>通过条件：</b>补偿后 c=0 附加相位接近 0，c=1 相对多 π；用独立重复数据复核。</p><p><b>未通过先查：</b>补偿正负号、degree/rad、θ/2、频率漂移；修改 Z 波形后旧 VZ 已失配。</p></div></section><section id="op5"><div class="sec-h"><span class="sec-n">实验</span><h2>5 · 独立验证、RB / 泄漏与稳定性</h2></div><div class="card opcard"><dl><dt>进入前</dt><dd>冻结校准版本；准备未用于调参的验证数据与随机序列。</dd><dt>固定项</dt><dd>SRB/IRB 的 Clifford 编译、时序、读出与复位约定。</dd><dt>扫描项与执行顺序</dt><dd>先复核条件 Ramsey 与泄漏；再做多个长度 m、每长度多条随机序列的 SRB 和交错 CZ 的 IRB。若可观测完整计算子空间，增加 LRB。门长扫描时每点重校波形与 VZ。</dd><dt>测量与参考</dt><dd>记录总计算子空间占据及理想输出概率；DTC 计算子空间要求数据比特在 0/1 且耦合器在基态。只能测 |2⟩ 时报告“数据比特泄漏”，不要声称完整 LRB。</dd><dt>处理与产出</dt><dd>报告拟合模型、残差、随机序列数、shots、不确定度与 IRB 噪声假设。论文定义下 F̄=1−L₁/4−r_CZ，不能再减一遍全部泄漏。QPT 可选，迹保持约束不是无泄漏证据。</dd></dl><p class="accept"><b>通过条件：</b>独立测量支持相位、泄漏与门误差预算；跨时间重复，记录重标历史。结果异常先查参考漂移，再回溯校准。</p><p><b>未通过先查：</b>优化数据过拟合、SPAM 漂移、双指数/泄漏模型不匹配、恢复 Clifford 编译错误。论文 12 h 每次 RB 前重标单比特。</p></div></section><section id="handoff"><div class="sec-h"><span class="sec-n">交接</span><h2>留下可复查的数据与配置</h2></div><div class="grid2"><div class="card checklist"><h3>实验记录清单</h3><p class="sm">勾选仅用于本次阅读，不自动保存；正式记录请写入实验日志。</p><label><input type="checkbox">芯片 / 比特对 / 日期 / dc 电流及磁通换算</label><label><input type="checkbox">读出分类矩阵、XY 校准版本和相干性</label><label><input type="checkbox">原始 IQ / 计数、参考点、shots 与随机序列</label><label><input type="checkbox">实际上传波形、采样率、单位、总长及 padding</label><label><input type="checkbox">预畸变配置、触发延迟、复位与重复间隔</label><label><input type="checkbox">相位符号、两个 VZ、独立验证与误差条</label><label><input type="checkbox">泄漏观测范围、RB 拟合残差、稳定性及重标记录</label></div><div class="card"><h3>快速定位问题</h3><div class="tw"><table><thead><tr><th>现象</th><th>先回哪一步</th></tr></thead><tbody><tr><td>连打门恶化，单次正常</td><td>失真、重复间隔与复位</td></tr><tr><td>改波形后 RB 下降</td><td>重新校 VZ</td></tr><tr><td>θ≈π 但可见度下降</td><td>泄漏、相干性和读出参考</td></tr><tr><td>不同时间“最佳幅度”漂移</td><td>dc 与 XY 频率参考</td></tr><tr><td>高 N 好，低 N 不对</td><td>相位分支与完整回波实现</td></tr><tr><td>reward 好，独立 RB 差</td><td>独立数据、泄漏和目标偏差</td></tr></tbody></table></div></div></div></section>
+<details class="reference" id="research"><summary>展开论文原理、参数、进阶序列与结果图</summary><p class="note">此处是论文参考资料，不是本机执行顺序。图为示意，数字为论文案例；精确 JAZZ / JAZZ2 回波实现须对照原文 Fig. 2 / 13。上方操作区采用条件 Ramsey 起步。</p>
+
+<!-- ============================== 器件 ============================== -->
+<section id="device">
+  <div class="sec-h"><span class="sec-n">01</span><h2>器件与耦合原理</h2></div>
+  <p class="sec-p">
+    DTC 由 4 个 transmon 组成：<b>Q1 / Q2</b> 为数据比特，<b>C3 / C4</b> 为耦合器。
+    JJ3、JJ4 与额外结点 JJ5 组成超导环，外磁通 φ<sub>ex</sub> 经该环调控两比特间的 ZZ 相互作用。
+  </p>
+
+  <figure>
+    <div id="svgDevice"></div>
+    <figcaption><b>图 1 · DTC 器件与测量链路示意。</b>
+      青色 = 数据比特 Q1(4.314 GHz)、Q2(4.778 GHz)；紫色 = 耦合器 transmon C3、C4；
+      琥珀色 = 超导环（JJ3–JJ5）与磁通。Q1–C3 = 5.73 fF、C4–Q2 = 5.77 fF 电容耦合；
+      C12 = 0.04 fF 为寄生。dc 线圈使用低通，样品使用磁屏蔽；快速磁通线电感性耦合到环路施加 Z 脉冲，
+      外部超导线圈提供 dc 维持 idle bias point。</figcaption>
+  </figure>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>玩具模型：p 模式 + m 模式</h3>
+      <div id="svgToy"></div>
+      <p class="sm">
+        DTC 可等效为一个<b>定频 transmon P（p 模式，5.495 GHz）</b>与一个
+        <b>CSFQ M（m 模式，5.373 GHz）</b>：p 模式提供"固定"耦合，m 模式频率随磁通扫过 p 模式，
+        提供"可变"且与 Q2 反号的耦合。二者相加得有效耦合 g<sub>eff</sub>，调磁通即可让 g<sub>eff</sub> 过零。
+      </p>
+    </div>
+    <div class="card">
+      <h3>有效耦合与被标定对象</h3>
+      <div class="eq">g<sub>eff</sub> = <b>g₁p g₂p</b>/2 (1/Δ₁p + 1/Δ₂p) − <b>g₁m g₂m</b>/2 (1/Δ₁m + 1/Δ₂m)</div>
+      <p class="sm">
+        ζ = E<sub>|11⟩</sub> − E<sub>|10⟩</sub> − E<sub>|01⟩</sub> + E<sub>|00⟩</sub> 即为 CZ 门要利用的 ZZ 相互作用
+        （高保真 CZ = 精确标定的 CPHASE）。
+      </p>
+      <div class="chips">
+        <span class="chip hot">① idle 磁通</span>
+        <span class="chip hot">② Z 脉冲失真</span>
+        <span class="chip hot">③ CZ 相位 θ=π</span>
+        <span class="chip hot">④ 两个 VZ 相位</span>
+      </div>
+      <p class="sm">
+        两比特失谐 464 MHz &gt; 非谐性（−212 / −199 MHz），工作于 <b>straddling regime 之外</b>，
+        放宽数据比特失谐限制，但仍需检查高能级与耦合器的避免交叉；qb 与耦合器强排斥还带来一个便利：
+        <b>数据比特自身频率对磁通灵敏</b>，可用来当传感器标定 Z 脉冲失真——不需要耦合器读出谐振器。
+      </p>
+    </div>
+  </div>
+
+  <div class="tw"><table>
+    <caption class="sm" style="text-align:left;padding:6px 2px">表 1 · 论文可调/关键参数速查</caption>
+    <thead><tr><th>项目</th><th class="num">数值</th><th>项目</th><th class="num">数值</th></tr></thead>
+    <tbody>
+      <tr><td>Q1 / Q2 频率</td><td class="num">4.314 / 4.778 GHz</td><td>α = E<sub>J5</sub>/E<sub>J3</sub></td><td class="num">0.216</td></tr>
+      <tr><td>非谐性 Q1 / Q2</td><td class="num">−212 / −199 MHz</td><td>C<sub>13</sub> / C<sub>24</sub></td><td class="num">5.73 / 5.77 fF</td></tr>
+      <tr><td>p / m 模式频率</td><td class="num">5.495 / 5.373 GHz</td><td>C<sub>34</sub> / C<sub>12</sub></td><td class="num">1.73 / 0.04 fF</td></tr>
+      <tr><td>读出谐振器</td><td class="num">8.184 / 8.261 / 8.101 GHz</td><td>I<sub>c1..5</sub></td><td class="num">26.13 … 10.32 nA</td></tr>
+      <tr><td>idle bias point</td><td class="num">φ<sub>ex</sub>/2π = 0.309</td><td>解析估计</td><td class="num">0.319</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================== 能谱 / ZZ ============================== -->
+<section id="spectrum">
+  <div class="sec-h"><span class="sec-n">02</span><h2>能谱与 ZZ 相互作用：标定的物理基础</h2></div>
+  <p class="sec-p">
+    所有校准量都来自这条"磁通–能量"曲线：idle 点是 ZZ 的零点，磁性工作点是 ZZ 的极深点。
+    由于需要四 transmon 联合对角化，论文用 Hamiltonian 数值仿真与实测对照，再人工搜索电路参数。
+  </p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgSpec"></div>
+      <figcaption><b>图 2 · 四个最低激发态随磁通的能谱（示意图）。</b>
+        虚线为 idle bias point（0.309）；点线为最大 ZZ 点（0.47）。
+        C3/C4 与 Q1/Q2 分别用电容耦合，耦合器 mode M 随磁通下移并与 Q2、P 发生避免交叉，
+        这就是强耦合区（0.325&lt;φ/2π&lt;0.5）的来源。</figcaption>
+    </figure>
+    <figure>
+      <div id="svgZZ"></div>
+      <figcaption><b>图 3 · ZZ 相互作用 ζ 与磁通的关系（示意图）。</b>
+        idle 点 ζ<sub>min</sub> = 2π×(−6.3) kHz；φ/2π=0.47 处 ζ<sub>max</sub> = 2π×(−82.5) MHz，
+        on/off 比 <b>1.3×10⁴</b>。0.47–0.5 区间幅度略降是 |20⟩⟨00| 与 |00⟩⟨02| ↔ |10⟩⟨01| 排斥的反向贡献所致。</figcaption>
+    </figure>
+  </div>
+
+  <div class="note info">
+    <b>为什么"大 ZZ"能实现快门？</b> CZ 门在绝热过程中扫过能谱：从 idle 点出发，
+    增大磁通让 |11⟩ 与耦合器态强烈排斥、累积 CZ 相位，再扫回。ZZ 越大，达到 π 相位的门长越短；
+    但伴随而来的是<b>泄漏误差</b>（非绝热跃迁）——这正是后面 RL 要优化脉冲形状的原因。
+  </div>
+</section>
+
+<!-- ============================== 器件参数设计 ============================== -->
+<section id="design">
+  <div class="sec-h"><span class="sec-n">03</span><h2>器件参数设计与搜索（附录 C）</h2></div>
+  <p class="sec-p">
+    CZ 校准前的前置工作：四 transmon 联合对角化给出 ζ<sub>min</sub>（残余 ZZ）与 ζ<sub>max</sub>（CZ 速度），
+    二者都要满足 → 参数必须在"权衡面"上搜索。论文给出一套 5 步人工搜索流程，比四维盲扫高效得多。
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>5 步搜索流程（3–5 可反复迭代）</h3>
+      <ol>
+        <li><b>定比特频率与非谐性</b>：4–5.5 GHz，非谐性 ≈ −200 MHz；失谐取 500 MHz（脱离 straddling）。</li>
+        <li><b>处理杂散电容</b>：C14、C23、C12 &lt; 1 fF 可忽略；C34 视为定值（Sonnet/COMSOL 给出）。</li>
+        <li><b>定耦合电容</b> C<sub>g</sub> = C13 = C24：分电容的 <b>5–10%</b>（≈100–200 MHz 耦合），本文 5.7 fF。</li>
+        <li><b>固定 α 扫 {C<sub>c</sub>, E<sub>Jc</sub>}</b>：α = E<sub>J5</sub>/E<sub>J3</sub> 应 &lt; 0.25（本文 0.216）。</li>
+        <li><b>固定 C<sub>c</sub> 扫 {E<sub>Jc</sub>, α}</b>：α↑ → 两耦合器耦合更强 → 间接增大比特间 ZZ。</li>
+      </ol>
+      <div class="note warn" style="margin-bottom:0">
+        <b>核心权衡</b>：C<sub>c</sub>↑ 或 E<sub>Jc</sub>↓ → 耦合器模式频率↓ → ζ<sub>min</sub> 与 ζ<sub>max</sub> <b>同时</b>增大。
+        要"快门 + 低残余"必须精细平衡；ζ<sub>max</sub> 大虽让门更快，但留给其他参数的容差变小。
+      </div>
+    </div>
+    <figure>
+      <div id="svgSearch"></div>
+      <figcaption><b>图 A · 参数权衡面（示意）。</b>
+        横轴 = 残余 ZZ |ζ<sub>min</sub>|（越小越好，决定单门误差），纵轴 = |ζ<sub>max</sub>|（越大越好，决定 CZ 速度）。
+        灰点 = 参数扫描得到的候选组合；红星 = 论文最终取值（|ζ<sub>min</sub>|=6.3 kHz，ζ<sub>max</sub>=82.5 MHz）。
+        绿色虚框为理想区（左上角）；紫色虚线为"速度—残余"权衡边界。</figcaption>
+    </figure>
+  </div>
+
+  <div class="chips">
+    <span class="chip hot">α &lt; 0.25（经验上限）</span>
+    <span class="chip">C<sub>g</sub> = 5–10% 分电容</span>
+    <span class="chip">C34 ≈ 1.7 fF（定值）</span>
+    <span class="chip">杂散 &lt; 1 fF 可忽略</span>
+    <span class="chip">工艺偏差：实测 ≠ 设计，需再调</span>
+    <span class="chip">仿真基准 = Eq.(1) 数值对角化</span>
+  </div>
+</section>
+
+<!-- ============================== 校准流程 ============================== -->
+<section id="flow">
+  <div class="sec-h"><span class="sec-n">04</span><h2>校准流程总览（8 步）</h2></div>
+  <p class="sec-p">蓝色 = 电子学/基础标定；紫色 = 单比特；琥珀色 = Z 脉冲与 CZ 相位；绿色 = 相位补偿与验证。</p>
+
+  <div class="flow">
+    <div class="step g1"><span class="n">STEP 0</span><span class="tag">硬件</span>
+      <h5>链路与电子学准备</h5><p>SHFQC 出 XY+复用读出；HDAWG8 出 Z 并带实时预补偿；GS200 供超导线圈 dc；FS725 铷钟同步；独立 dc 线圈链路加 <b>&lt;1.6 kHz / π 低通</b>。</p></div>
+    <div class="step g2"><span class="n">STEP 1</span><span class="tag">JAZZ</span>
+      <h5>idle bias point</h5><p>扫 dc 磁通用 JAZZ 找 ZZ 零点 → <b>0.309</b>，残余 2π×(−6.3) kHz；单比特门与读出在同一工作点校准。</p></div>
+    <div class="step g2"><span class="n">STEP 2</span><span class="tag">DRAG+RB</span>
+      <h5>单比特门精标</h5><p>DRAG；单独/同时 RB 验证残余 ZZ 不伤单门 → Q1/Q2 ≥ 99.98%。<b>idle 确定后精标，CZ 前完成</b>，否则污染 CZ/VZ 相位。</p></div>
+    <div class="step g3"><span class="n">STEP 3</span><span class="tag">预畸变</span>
+      <h5>Z 脉冲失真标定</h5><p>把 Q2 当传感器：Ramsey+相位层析，分<b>短期(603 ns…)</b>/<b>长期(400 μs…)</b>拟合 {a<sub>k</sub>,τ<sub>k</sub>}，回代 AWG 做 predistortion。</p></div>
+    <div class="step g3"><span class="n">STEP 4</span><span class="tag">RL(PPO)</span>
+      <h5>CZ 相位优化</h5><p>JAZZ-N 扫 Slepian 幅度 → θ<sub>CZ</sub>≈π；再用 JAZZ2-N 保真度作 reward，PPO 优化<b>脉冲形状</b>（20 点→2 GSa/s 样条）。</p></div>
+    <div class="step g3"><span class="n">STEP 5</span><span class="tag">RL(PPO)</span>
+      <h5>VZ 相位优化</h5><p>Ramsey 型序列逐比特测 Z 累积相位作初值 → 两比特 RB 保真度作 reward 微调。<b>Z 脉冲固定不动</b>。</p></div>
+    <div class="step g4"><span class="n">STEP 6</span><span class="tag">QPT</span>
+      <h5>PTM 复核</h5><p>36 初态 × 36 投影重建 16×16 Pauli 转移矩阵，确认"这就是 CZ"（受 SPAM 低估，仅定性）。</p></div>
+    <div class="step g4"><span class="n">STEP 7 · 8</span><span class="tag">SRB/IRB/LRB</span>
+      <h5>精度与误差预算</h5><p>LRB 分离泄漏/去极化：r<sub>CZ</sub>=0.090%、L=0.027% → <b>99.90%</b>；门长扫描定 48 ns。</p></div>
+  </div>
+
+  <div class="note warn">
+    <b>三条硬性依赖顺序：</b>
+    ① 单比特门（STEP 2）必须先于 CZ/VZ 优化——单门相位误差会被误当作 VZ 相位；
+    ② Z 脉冲失真（STEP 3）必须先于 RL——否则 agent 把学习容量浪费在补偿未知线路瞬态；
+    ③ <b>Z 形状与 VZ 相位必须分开优化</b>：DTC 中数据比特被耦合器能级排斥，Z 脉冲期间频率动态变化，
+    使 VZ 相位对脉冲形状"高度敏感"，论文选择分开优化；实际改动 Z 波形后应重校 VZ。
+  </div>
+</section>
+
+<!-- ============================== STEP 1 ============================== -->
+<section id="s1">
+  <div class="sec-h"><span class="sec-n">05</span><h2>STEP 1 · idle bias point 定标（JAZZ）</h2></div>
+  <p class="sec-p">目标：用超导线圈把磁通精确钉在 ZZ 零点，作为所有单比特与 CZ 优化的起点。</p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgJazz"></div>
+      <figcaption><b>图 4 · 条件 Ramsey 序列（入门方法）。</b>
+        旧图已替换为条件 Ramsey 测 ZZ 的可操作序列。下面的 JAZZ 公式仅适用于原文 Fig. 2(a) 的完整回波序列；
+        固定分析轴扫等待 τ，或固定 τ 扫分析相位 α。分别制备 Q2=0/1，再比较探针频率或相位；不要混用两种扫描轴。</figcaption>
+    </figure>
+    <div>
+      <div class="card">
+        <h3>核心公式</h3>
+        <div class="eq">P<sub>|0⟩</sub> = (1 − cos φ)/2,&nbsp;&nbsp; φ = <b>ζ·t/2</b> + φ₀</div>
+        <div class="eq">人为引入基线频率 ω<sub>b</sub>：&nbsp;&nbsp; <b>ζ = 2(ω<sub>m</sub> − ω<sub>b</sub>)</b></div>
+        <p class="sm">
+          idle 点 |ζ| 仅 kHz 量级，受相干时间限制无法测到足够多个振荡周期 →
+          令末尾 π/2 相位随时间线性变化，人为把振荡频率抬到 ω<sub>b</sub>，再减掉基线即得 ζ。
+          取 ω<sub>b</sub> &gt; |ζ/2| 保证 ω<sub>m</sub> 为正、避免符号混淆。
+        </p>
+      </div>
+      <div class="card tight">
+        <h4>结果</h4>
+        <div class="chips">
+          <span class="chip ok">φ<sub>ex</sub>/2π = 0.309</span>
+          <span class="chip ok">ζ<sub>min</sub> = 2π×(−6.3) kHz</span>
+          <span class="chip">解析估计 0.319</span>
+        </div>
+        <p class="sm">测大 ZZ（φ/2π≈0.47）时振荡太快，不需要基线技巧：最终门固定为 Y<sub>π/2</sub>，ζ = 2ω<sub>m</sub> → ζ<sub>max</sub> = 2π×(−82.5) MHz。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STEP 2 ============================== -->
+<section id="s2">
+  <div class="sec-h"><span class="sec-n">06</span><h2>STEP 2 · 单比特门精标（DRAG + RB）</h2></div>
+  <p class="sec-p">
+    在 idle 点用 DRAG 校 X/Y 旋转；用"单独 RB + 同时 RB"两套数据确认残余 ZZ 不是单门误差来源；
+    CZ 优化期间与每次 RB 前都要重标（温度漂移）。
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>单/同时 RB 结果</h3>
+      <div class="tw"><table>
+        <thead><tr><th>测量方式</th><th class="num">Q1</th><th class="num">Q2</th></tr></thead>
+        <tbody>
+          <tr><td>单独 RB（他比特置 |0⟩）</td><td class="num">99.985%</td><td class="num">99.981%</td></tr>
+          <tr><td>同时 RB（两比特同时跑）</td><td class="num">99.985%</td><td class="num">99.983%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="sm">两者几乎一致 ⇒ 2π×(−6.3) kHz 残余 ZZ <b>不是</b>当前单门限制因素。门长 48 ns，单 Clifford 折 1.875 个物理门。</p>
+      <div class="note ok" style="margin-bottom:0">结论：残余 ZZ 已被"关断"到不影响单门的水平，可以进入单比特-CZ 混合实验阶段。</div>
+    </div>
+    <div class="card">
+      <h3>idle 点相干时间（17.5 h 稳定性测量均值）</h3>
+      <div class="tw"><table>
+        <thead><tr><th></th><th class="num">T₁ (μs)</th><th class="num">T₂ᴿ (μs)</th><th class="num">T₂ᴱ (μs)</th></tr></thead>
+        <tbody>
+          <tr><td>Q1</td><td class="num">228.6 ± 30.4</td><td class="num">132.4 ± 59.9</td><td class="num">358.9 ± 47</td></tr>
+          <tr><td>Q2</td><td class="num">205.3 ± 26.0</td><td class="num">62.4 ± 6.1</td><td class="num">129.8 ± 13.3</td></tr>
+        </tbody>
+      </table></div>
+      <p class="sm">
+        Q1 远离耦合器能级、磁通灵敏度低 → T₂ᴿ/T₂ᴱ 更长；Q2 被耦合器排斥更明显、磁通噪声更敏感 → T₂ᴱ 明显短。
+        T₁ &gt; 200 μs 得益于 Ta 薄膜工艺。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STEP 3 ============================== -->
+<section id="s3">
+  <div class="sec-h"><span class="sec-n">07</span><h2>STEP 3 · Z 脉冲失真标定与预畸变</h2></div>
+  <p class="sec-p">
+    快速磁通线带宽受限且有色散，方波 Z 脉冲结束后仍有"尾巴"，破坏理想绝热过程。
+    <b>关键巧思：不给耦合器加读出谐振器，而是把 Q2 当传感器。</b>
+  </p>
+
+  <div class="note">
+    <b>为什么 Q2 能当传感器？</b> 在 0.375 &lt; φ<sub>ex</sub>/2π &lt; 0.45 区间，Q2 频率被耦合器能级显著排斥，
+    从而对磁通灵敏（代价：该点 T₂ᴿ≈3 μs）。STC 方案通常需要一个可调比特做同样的事，DTC 只需一个调磁通元素。
+  </div>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgDist"></div>
+      <figcaption><b>图 5 · 短期 vs 长期失真。</b>左：理想方波 Z 脉冲；右：断电后的残余相位为多指数叠加——
+        三支时间常数跨度从 ns 到 μs，必须分别标定。短期用 48 ns 小幅度方波（避免推过 anticrossing）；
+        长期用 10 μs 大幅度方波 + 固定 ~500 ns Ramsey 以提高 SNR。</figcaption>
+    </figure>
+    <div class="card">
+      <h3>模型与标定结果</h3>
+      <div class="eq">φ(t) = φ₀ Σ<sub>k</sub> a<sub>k</sub> [ e<sup>−t/τₖ</sup> − e<sup>−(t+τ<sub>pulse</sub>)/τₖ</sup> ]</div>
+      <div class="tw"><table>
+        <thead><tr><th>短期标定</th><th class="num">幅度 a<sub>k</sub></th><th>长期标定</th><th class="num">幅度 a<sub>k</sub></th></tr></thead>
+        <tbody>
+          <tr><td>τ = 603.3 ns</td><td class="num">−0.0104</td><td>τ = 400.5 μs</td><td class="num">+0.12</td></tr>
+          <tr><td>τ = 79.45 ns</td><td class="num">−0.0137</td><td>τ = 71.02 μs</td><td class="num">+0.038</td></tr>
+          <tr><td>τ = 13.60 ns</td><td class="num">+0.00525</td><td>—</td><td class="num">—</td></tr>
+        </tbody>
+      </table></div>
+      <p class="sm">
+        拟合出的 {a<sub>k</sub>, τ<sub>k</sub>} 回代 AWG/HDAWG 的预补偿做 <b>predistortion</b>，CZ 优化与测精度全程生效。
+      </p>
+      <div class="note warn" style="margin-bottom:0">短期幅度有正有负，长期两项为正；符号不能确定物理来源。两种序列覆盖不同时间尺度，再统一验证预畸变效果。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STEP 4 ============================== -->
+<section id="s4">
+  <div class="sec-h"><span class="sec-n">08</span><h2>STEP 4 · CZ 相位（θ<sub>CZ</sub> = π）优化</h2></div>
+  <p class="sec-p">"先物理、后 RL"两段式：先用 JAZZ-N 把脉冲幅度标到 θ≈π，再用强化学习把脉冲<b>形状</b>优化到位。</p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgJazzN"></div>
+      <figcaption><b>图 6 · JAZZ-N / JAZZ₂-N 序列。</b>
+        左：N = 4k+1 的 (π−Z)ᴺ 重复，N 越大对幅度越灵敏，测 Q2 的 P<sub>|1⟩</sub>——
+        <b>单比特旋转自动抵消，与 VZ 无关</b>。
+        右：JAZZ₂-N（N = 2k）两端各加 π/2、测 P<sub>|00⟩</sub>，对形状更敏感、对单门误差更鲁棒，作 RL 的 reward。</figcaption>
+    </figure>
+    <div class="card">
+      <h3>两条 reward 曲线</h3>
+      <div class="eq">JAZZ-N：&nbsp; P<sub>|1⟩</sub> = (1 − cos[(2k+1)θ<sub>CZ</sub>])/2</div>
+      <div class="eq">JAZZ₂-N：&nbsp; P<sub>|00⟩</sub> = (1 − cos[(2k+1)θ<sub>CZ</sub>])/2 <b>⟶1</b></div>
+      <p class="sm">
+        实测 N = 9, 41, 101（k = 2, 10, 25）逐级细化幅度。初始形态用 <b>Slepian</b>：
+        由 θ(t)=arctan(H<sub>x</sub>/H<sub>z</sub>)、dθ/dt = S(t) 得 θ(t)=∫S dt，再以 H<sub>z</sub>/H<sub>x</sub>≈C·z²(t) 映射到 AWG 电压。
+        48 ns 总长、首尾各 2 ns 零 padding。Gaussian/cosine 亦可，<b>论文中主要影响优化效率；有限训练预算下不保证相同性能</b>。
+      </p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgShape"></div>
+      <figcaption><b>图 7 · Slepian 初值 vs RL 优化后的脉冲（示意）。</b>
+        优化只用 <b>20 个控制点</b>（2 GSa/s + 三次样条插值）参数化；下图是两者之差及其 FFT——
+        agent 在往脉冲里"注入"特定频率分量，推测用于补偿残余短瞬态失真、或抑制 anticrossing 附近的高能级跃迁。</figcaption>
+    </figure>
+    <figure>
+      <div id="svgRL"></div>
+      <figcaption><b>图 8 · PPO 训练收敛（示意）。</b>
+        每 epoch 由策略生成 20 个波形，用 JAZZ₂-N 序列存活概率作 reward（RB 用于 VZ 优化）；约 100 epoch 收敛；
+        单机无 GPU 训练 ≈2 h，主要耗时在<b>波形上传</b>与策略更新。需要更细时增大 N 并在上一轮结果上续训。</figcaption>
+    </figure>
+  </div>
+
+  <div class="chips">
+    <span class="chip hot">PPO（改编自 Ref.[85]）</span>
+    <span class="chip">20 波形/epoch</span>
+    <span class="chip">≈100 epoch 收敛</span>
+    <span class="chip">20 控制点 @2 GSa/s</span>
+    <span class="chip">三次样条插值</span>
+    <span class="chip">前后无关的 model-free</span>
+  </div>
+</section>
+
+<!-- ============================== STEP 5 ============================== -->
+<section id="s5">
+  <div class="sec-h"><span class="sec-n">09</span><h2>STEP 5 · VZ（virtual-Z）相位优化</h2></div>
+  <p class="sec-p">
+    虽然每个数据比特只有一个约瑟夫森结（形似定频），CZ 期间仍被耦合器能级排斥而频率动态变化，
+    各自累积附加 Z 旋转 θ₁、θ₂，必须用<b>零成本的 virtual-Z</b> 补偿。
+  </p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgVZ"></div>
+      <figcaption><b>图 9 · VZ 相位标定序列。</b>
+        测 Q1 时 Q2 置 |0⟩（反之亦然）：π/2 → 重复 N 次 Z 脉冲（每次给 θ<sub>i</sub>/2）→ 相位层析，
+        线性拟合得每周相位。图示直线斜率即 θ/2。</figcaption>
+    </figure>
+    <div>
+      <div class="card">
+        <h4>物理初值（Ramsey 型 + 线性拟合）</h4>
+        <div class="chips">
+          <span class="chip ok">Q1：θ₁/2 = 139.33° / 周期</span>
+          <span class="chip ok">Q2：θ₂/2 = −102.05° / 周期</span>
+        </div>
+        <p class="sm">比特频率标不准会引入附加相位污染 VZ 标定 → 用 echo 型序列（π/2−Z−π−I−Tomo）或先精标比特频率。</p>
+      </div>
+      <div class="card">
+        <h4>RL 微调</h4>
+        <p class="sm">
+          reward = 两比特 Clifford RB 的序列保真度；<b>Z 脉冲保持固定</b>，只优化 (VZ<sub>Q1</sub>, VZ<sub>Q2</sub>)；
+          每 epoch 生成 20 组，配 5 条随机 Clifford（m = 20）测均值。
+        </p>
+        <div class="note warn" style="margin-bottom:0">
+          <b>读出误差限制本实验的优化灵敏度。</b>论文明确指出：用 RB 进一步优化 VZ 是把相位误差压到 &lt;1.5°（贡献 &lt;0.01% 相干误差）的关键一步。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STEP 6 ============================== -->
+<section id="s6">
+  <div class="sec-h"><span class="sec-n">10</span><h2>STEP 6 · QPT / Pauli 转移矩阵复核</h2></div>
+  <p class="sec-p">36 个初态 × 36 个投影测量 + 最大似然重建，直观确认"这个门就是 CZ"；保真度仅作参考（受 SPAM 低估至 95.9%）。</p>
+
+  <figure>
+    <div id="svgPTM"></div>
+    <figcaption><b>图 10 · CZ 门的 Pauli 转移矩阵。</b>
+      左：理想 PTM（16 个非零元，含 XX↔YY、XI→XZ 等共轭结构）；右：带泄漏/SPAM 的实验版示意。
+      首行 (R)<sub>0j</sub> = δ<sub>0j</sub> 表示最大似然强制的 trace-preserving。数值用于展示结构，非实测。</figcaption>
+  </figure>
+
+  <div class="grid3">
+    <div class="card tight"><h4>制备</h4><p class="sm">{X±,Y±,Z±}^⊗2 = <b>36 个初态</b>，由 {Y<sub>π/2</sub>, −Y<sub>π/2</sub>, −X<sub>π/2</sub>, X<sub>π/2</sub>, I, X<sub>π</sub>}^⊗2 制备。</p></div>
+    <div class="card tight"><h4>测量与重建</h4><p class="sm">36×36 = 1296 个投影结果，态层析 + Pauli 基底矢量化 + 最大似然重建 R<sub>ij</sub> = ⟨i|R|j⟩。</p></div>
+    <div class="card tight"><h4>保真度</h4><div class="eq" style="margin:6px 0">F = [Tr(R<sub>ideal</sub><sup>T</sup>R) + d]/[d(d+1)], d=4</div><p class="sm">实验结果 <b>0.959</b>（SPAM 主导的低估）。</p></div>
+  </div>
+</section>
+
+<!-- ============================== STEP 7 ============================== -->
+<section id="s7">
+  <div class="sec-h"><span class="sec-n">11</span><h2>STEP 7 · 精度评估：LRB / SRB / IRB</h2></div>
+  <p class="sec-p">有泄漏时标准 RB 必须改造：同时拟合"总残留概率"与"理想态存活率"，把泄漏、去极化、SPAM 分离开。</p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgLRB"></div>
+      <div id="svgRB" style="margin-top:12px"></div>
+      <figcaption><b>图 11 · 泄漏 RB 与两比特 RB（示意）。</b>
+        上：P<sub>X1</sub>(m) = A + Bλ<sub>L</sub><sup>m</sup> 衰减到泄漏平台；下：P<sub>id</sub> − P<sub>X1</sub>/d = Cλ<sub>r</sub><sup>m</sup> + D
+        是<b>单指数</b>（去掉常数项后），从而避开不可靠的双指数拟合。</figcaption>
+    </figure>
+    <div class="card">
+      <h3>公式链</h3>
+      <div class="eq">L₁ = (1−λ<sub>L</sub>)(1−A),&nbsp;&nbsp; r = (1−λ<sub>r</sub>)(1−1/d),&nbsp; d=4</div>
+      <div class="eq">L₁<sup>CZ</sup> = 1 − (1−L₁<sup>IRB</sup>)/(1−L₁<sup>SRB</sup>)</div>
+      <div class="eq">r<sub>CZ</sub> ≈ <b>((d−1)/d)·(1 − λ<sub>r</sub><sup>IRB</sup>/λ<sub>r</sub><sup>SRB</sup>)</b></div>
+      <div class="eq">F̄ = 1 − L₁<sup>CZ</sup>/d − r<sub>CZ</sub></div>
+      <div class="tw"><table>
+        <thead><tr><th>量</th><th class="num">本文结果</th></tr></thead>
+        <tbody>
+          <tr><td>r<sub>CZ</sub>（Clifford IRB）</td><td class="num">0.090 ± 0.009 %</td></tr>
+          <tr><td>L₁<sup>CZ</sup>（泄漏）</td><td class="num">0.027 ± 0.006 %</td></tr>
+          <tr><td>平均保真度 F̄</td><td class="num"><b>99.90 ± 0.01 %</b></td></tr>
+        </tbody>
+      </table></div>
+      <p class="sm">LRB 比忽略泄漏的常规 RB 给出的保真度低 L₁/d——泄漏虽小但不能不计。数据点为 10 条随机序列的平均±标准差。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== STEP 8 ============================== -->
+<section id="s8">
+  <div class="sec-h"><span class="sec-n">12</span><h2>STEP 8 · 误差预算与门长选择</h2></div>
+  <p class="sec-p">总 infidelity 0.10% = 泄漏 0.027% + 去极化型 0.090%；相干相位误差 &lt;1.5° ⇒ 贡献 &lt;0.01% 可忽略。</p>
+
+  <div class="grid2">
+    <figure>
+      <div id="svgBudget"></div>
+      <figcaption><b>图 12 · 误差预算构成（示意）。</b>外圈=总 infidelity 0.10%；内圈拆分为去极化型/非相干与泄漏两部分。</figcaption>
+    </figure>
+    <figure>
+      <div id="svgGateLen"></div>
+      <figcaption><b>图 13 · 门长扫描与线性模型（示意）。</b>
+        实线 r<sub>D</sub><sup>CZ</sup> = (2/5)·t<sub>gate</sub>/T<sub>eff</sub> + r₀（Pearson≈0.995, p&lt;10⁻⁹, r₀=−0.0007±0.008%）；
+        40 ns 点（×）为离群点：短门下 RL 优化失败使泄漏升到 ~0.1%。
+        <b>48 ns 是泄漏与非相干误差的平衡点。</b></figcaption>
+    </figure>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>非相干误差模型</h4>
+      <div class="eq">1−F ≈ (2/5)(t/T₁<sup>1</sup>+t/T₁<sup>2</sup>+t/Tφ<sup>1</sup>+t/Tφ<sup>2</sup>) + (3/10)(t/T<sub>CZ</sub>) ≡ <b>(2/5) t/T<sub>eff</sub></b></div>
+      <p class="sm">
+        T<sub>eff</sub><sup>exp</sup> = <b>23.9 ± 1.5 μs</b>，明显低于由 idle 点 T₁/Tφ 估算的
+        T<sub>eff</sub><sup>est</sup> = 67.6 ± 11.4 μs ⇒ 存在"CZ 期间的额外退相干"（多能级混合 + Z 脉冲激活的噪声通道）。
+      </p>
+      <div class="note ok" style="margin-bottom:0">1/f 磁通噪声可忽略：√A<sub>Φ</sub>≈4.84 μΦ₀，Monte Carlo 给出 40–320 ns 门长内误差 &lt;10⁻⁶。</div>
+    </div>
+    <div class="card">
+      <h4>12 小时稳定性</h4>
+      <div id="svgStab"></div>
+      <p class="sm">
+        6 次 r<sub>CZ</sub> 全部 &lt;0.1%（平均 0.09±0.01%），L₁ 平均 0.030±0.003%。
+        期间 CZ 参数<b>只优化一次</b>，单比特门每次 RB 前重标（温度漂移是主要不稳定源）。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 读出与噪声 ============================== -->
+<section id="readout">
+  <div class="sec-h"><span class="sec-n">13</span><h2>读出、状态判别与噪声基线</h2></div>
+  <p class="sec-p">
+    读出误差影响精度评估与 RL 优化的灵敏度；1/f 磁通噪声则决定了哪些误差项可以忽略。
+    这一节汇总论文的读出分类矩阵与噪声测量结果，方便对齐"我们能做到什么程度"。
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>单发状态判别（k-means 聚类）</h3>
+      <div class="tw"><table>
+        <thead><tr><th>制备 \ 读出</th><th class="num">Q1 |0⟩</th><th class="num">|1⟩</th><th class="num">|2⟩</th></tr></thead>
+        <tbody>
+          <tr><td>|0⟩</td><td class="num">0.9933</td><td class="num">0.0006</td><td class="num">0.0061</td></tr>
+          <tr><td>|1⟩</td><td class="num">0.0121</td><td class="num">0.9787</td><td class="num">0.0092</td></tr>
+          <tr><td>|2⟩</td><td class="num">0.0060</td><td class="num">0.0257</td><td class="num">0.9683</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tw"><table>
+        <thead><tr><th>制备 \ 读出</th><th class="num">Q2 |0⟩</th><th class="num">|1⟩</th><th class="num">|2⟩</th></tr></thead>
+        <tbody>
+          <tr><td>|0⟩</td><td class="num">0.9973</td><td class="num">0.0017</td><td class="num">0.0010</td></tr>
+          <tr><td>|1⟩</td><td class="num">0.0231</td><td class="num">0.9704</td><td class="num">0.0065</td></tr>
+          <tr><td>|2⟩</td><td class="num">0.0196</td><td class="num">0.0398</td><td class="num">0.9406</td></tr>
+        </tbody>
+      </table></div>
+      <p class="sm">
+        耦合器（共用谐振器）：P(|00⟩‖|00⟩) = 0.9871、P(|xx⟩‖|xx⟩) = 0.9378 —— 只需区分"基态 vs 任一激发态"，
+        足够做泄漏表征；更高的 |2⟩ 误判来自非相干弛豫。提高分类保真度可进一步提升 VZ/RL 优化精度。
+      </p>
+    </div>
+    <div class="card">
+      <h3>噪声与相干基线</h3>
+      <div class="tw"><table>
+        <thead><tr><th></th><th class="num">T₁</th><th class="num">T₂ᴿ</th><th class="num">T₂ᴱ</th></tr></thead>
+        <tbody>
+          <tr><td>Q1</td><td class="num">228.6 μs</td><td class="num">132.4 μs</td><td class="num">358.9 μs</td></tr>
+          <tr><td>Q2</td><td class="num">205.3 μs</td><td class="num">62.4 μs</td><td class="num">129.8 μs</td></tr>
+        </tbody>
+      </table></div>
+      <h4>1/f 磁通噪声</h4>
+      <div class="eq">Γ<sub>Φ</sub><sup>E</sup> = (2π/Φ₀)·√(A<sub>Φ</sub> ln2)·|∂ω/∂φ<sub>ex</sub>|</div>
+      <p class="sm">
+        由 Hahn-echo 退相干率 vs 磁通灵敏度拟合：√A<sub>Φ</sub> ≈ 4.89 / 4.79 μΦ₀（Q1/Q2，平均 4.84 μΦ₀）。
+        Monte Carlo 1000 次采样偏磁通 → 40–320 ns 门长内 CZ 误差 &lt; 10⁻⁶，<b>可忽略</b>。
+      </p>
+      <div class="note info" style="margin-bottom:0">
+        <b>未解释的缺口</b>：T<sub>eff</sub><sup>exp</sup> = 23.9 ± 1.5 μs 远小于由 T₁/Tφ 估算的 67.6 ± 11.4 μs，
+        说明 CZ 期间存在额外退相干通道（多能级混合 + Z 脉冲激活噪声）—— 这是后续提升保真度的关键研究方向。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 公式速查 ============================== -->
+<section id="formulas">
+  <div class="sec-h"><span class="sec-n">14</span><h2>关键公式速查</h2></div>
+  <p class="sec-p">按用途分组，括号内为原文公式编号（正文 Eq.(1)–(15)，附录 Eq.(H1)、(I1)–(I5)、(K1)–(K26)、(L1)–(L17)）。</p>
+
+  <div class="grid3">
+    <div class="card tight">
+      <h4>A · ZZ 与能谱</h4>
+      <div class="eq">ζ = E<sub>|11⟩</sub> − E<sub>|10⟩</sub> − E<sub>|01⟩</sub> + E<sub>|00⟩</sub> <span class="sm">(3)</span></div>
+      <div class="eq">g<sub>eff</sub> = g₁p g₂p/2 (1/Δ₁p+1/Δ₂p) − g₁m g₂m/2 (1/Δ₁m+1/Δ₂m) <span class="sm">(4)</span></div>
+      <div class="eq">cos(2φ<sub>m</sub>+φ<sub>ex</sub>)=0, sinφ<sub>m</sub>=±α <span class="sm">(D7)</span></div>
+    </div>
+    <div class="card tight">
+      <h4>B · ZZ 测量（JAZZ）</h4>
+      <div class="eq">P<sub>|0⟩</sub> = (1−cosφ)/2, φ = ζt/2 + φ₀</div>
+      <div class="eq">ζ = 2(ω<sub>m</sub> − ω<sub>b</sub>), ω<sub>b</sub> &gt; |ζ/2|</div>
+      <div class="eq">ζ = 2ω<sub>m</sub>（大 ZZ 情形）</div>
+    </div>
+    <div class="card tight">
+      <h4>C · Z 脉冲失真</h4>
+      <div class="eq">φ(t) = φ₀ Σ<sub>k</sub> a<sub>k</sub>[e<sup>−t/τₖ</sup> − e<sup>−(t+τ<sub>p</sub>)/τₖ</sup>] <span class="sm">(H1)</span></div>
+      <div class="eq">θ = arctan(H<sub>x</sub>/H<sub>z</sub>), dθ/dt = S(t), H<sub>z</sub>/H<sub>x</sub> ≈ C z²(t) <span class="sm">(I2–I4)</span></div>
+    </div>
+    <div class="card tight">
+      <h4>D · CZ 相位标定</h4>
+      <div class="eq">θ<sub>CZ</sub> = θ₃−θ₁−θ₂+θ₀ = π</div>
+      <div class="eq">P<sub>|1⟩</sub> = (1−cos[(2k+1)θ<sub>CZ</sub>])/2 <span class="sm">(I1)</span></div>
+      <div class="eq">P<sub>|00⟩</sub> = (1−cos[(2k+1)θ<sub>CZ</sub>])/2 → 1 <span class="sm">(I5)</span></div>
+    </div>
+    <div class="card tight">
+      <h4>E · 精度评估（LRB）</h4>
+      <div class="eq">P<sub>X1</sub> = A + Bλ<sub>L</sub><sup>m</sup> <span class="sm">(K14)</span></div>
+      <div class="eq">P<sub>id</sub> − P<sub>X1</sub>/d = Cλ<sub>r</sub><sup>m</sup> + D <span class="sm">(K15)</span></div>
+      <div class="eq">L₁ = (1−λ<sub>L</sub>)(1−A) <span class="sm">(K20)</span></div>
+      <div class="eq">r<sub>CZ</sub> ≈ ((d−1)/d)(1 − λ<sub>r</sub><sup>IRB</sup>/λ<sub>r</sub><sup>SRB</sup>) <span class="sm">(11)</span></div>
+      <div class="eq">F̄ = 1 − L₁<sup>CZ</sup>/d − r<sub>CZ</sub> <span class="sm">(12)</span></div>
+      <div class="eq">F = [Tr(R<sub>ideal</sub><sup>T</sup>R) + d]/[d(d+1)] <span class="sm">(J1)</span></div>
+    </div>
+    <div class="card tight">
+      <h4>F · 误差预算</h4>
+      <div class="eq">r<sub>D</sub><sup>CZ</sup> = (2/5)·t<sub>gate</sub>/T<sub>eff</sub> + r₀ <span class="sm">(15)</span></div>
+      <div class="eq">1−F ≈ (2/5)Σt/T + (3/10)t/T<sub>CZ</sub> <span class="sm">(L17)</span></div>
+      <div class="eq">r<sub>SQ</sub><sup>inc</sup> = (t/3)(1/T₁ + 1/T<sub>φ</sub>) <span class="sm">(G3)</span></div>
+      <div class="eq">Γ<sub>Φ</sub><sup>E</sup> = (2π/Φ₀)√(A<sub>Φ</sub> ln2)|∂ω/∂φ<sub>ex</sub>| <span class="sm">(L3)</span></div>
+    </div>
+  </div>
+
+  <details class="card" style="margin-top:18px">
+    <summary style="cursor:pointer;font-weight:700">📖 术语中英对照（点击展开）</summary>
+    <div class="tw" style="margin-top:12px"><table>
+      <thead><tr><th>英文</th><th>中文</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr><td>double-transmon coupler (DTC)</td><td>双 transmon 耦合器</td><td>本文方案</td></tr>
+        <tr><td>single-transmon coupler (STC)</td><td>单 transmon 可调耦合器</td><td>对照方案</td></tr>
+        <tr><td>straddling regime</td><td>跨越区间（失谐 &lt; 非谐性）</td><td>外于此区避免频率碰撞</td></tr>
+        <tr><td>idle bias point</td><td>空闲偏置点</td><td>ZZ 最小点</td></tr>
+        <tr><td>on-off ratio</td><td>开关比</td><td>ζ<sub>max</sub>/ζ<sub>min</sub></td></tr>
+        <tr><td>flux transient</td><td>磁通瞬态</td><td>Z 脉冲断电后的残留</td></tr>
+        <tr><td>predistortion</td><td>预畸变</td><td>逆补偿线路失真</td></tr>
+        <tr><td>Slepian pulse</td><td>斯列皮安脉冲</td><td>平滑绝热初始脉冲</td></tr>
+        <tr><td>model-free RL / PPO</td><td>无模型强化学习</td><td>不依赖系统辨识</td></tr>
+        <tr><td>virtual-Z (VZ) gate</td><td>虚拟 Z 门</td><td>零时长，只改帧相位</td></tr>
+        <tr><td>leakage / seepage error</td><td>泄漏 / 渗出误差</td><td>计算 ↔ 泄漏子空间</td></tr>
+        <tr><td>depolarizing error</td><td>去极化误差</td><td>计算子空间内</td></tr>
+        <tr><td>Pauli transfer matrix (PTM)</td><td>Pauli 转移矩阵</td><td>过程层析实数表示</td></tr>
+        <tr><td>spectator error</td><td>旁观者误差</td><td>未参与比特受扰动</td></tr>
+        <tr><td>through-silicon via (TSV)</td><td>硅通孔</td><td>背面接地</td></tr>
+        <tr><td>Purcell filter</td><td>珀塞尔滤波器</td><td>抑制弛豫通道</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</section>
+
+<!-- ============================== 落地清单 ============================== -->
+<section id="todo">
+  <div class="sec-h"><span class="sec-n">15</span><h2>复现清单与易踩坑</h2></div>
+  <p class="sec-p">按依赖排序的可执行顺序，以及论文明确点出的坑。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>✅ 可照搬的校准顺序</h3>
+      <ol>
+        <li><b>基础</b>：谐振器频率/功率、k-means 单发分类（含 |2⟩）；SHFQC/HDAWG/铷钟同步。</li>
+        <li><b>XY</b>：DRAG（幅度/β/频率）→ 单独 + 同时 RB。</li>
+        <li><b>磁通</b>：dc 粗扫 + JAZZ 找 idle point → dc 源锁定 + 强低通滤波。</li>
+        <li><b>失真</b>：强耦合灵敏点（0.375–0.45）小幅度测短期、长脉冲测长期 → {a,τ} → 预畸变。</li>
+        <li><b>CZ 相位</b>：JAZZ-N 扫幅度（N=9→41→101）→ Slepian 初值 → JAZZ₂-N + PPO 优化形状。</li>
+        <li><b>VZ</b>：Ramsey 型逐比特标定（先用 echo 或精标频率）→ RB + PPO 微调。</li>
+        <li><b>验证</b>：QPT 看 PTM → LRB 出精度 → 门长扫描选 t<sub>gate</sub>。</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>⚠ 论文明确点出的坑</h3>
+      <ul>
+        <li>不先标 Z 失真就上 RL：agent 会用容量补偿未知瞬态，效率低甚至不收敛。</li>
+        <li>在 DTC 中联合优化 Z 形状与 VZ 相位"极难"（能级排斥致 VZ 对形状极敏感）——必须分两步。</li>
+        <li>门长短于约 40–48 ns：泄漏误差可能因 RL/带宽限制而反弹（本文 40 ns 约 0.1%）。</li>
+        <li>门长长于 100 ns：泄漏占比变小后 RL 优化敏感度下降，泄漏又缓慢上升。</li>
+        <li>单比特门要反复重标，否则温度漂移污染 CZ/VZ 相位评估。</li>
+        <li>读出噪声限制 VZ/RL 优化灵敏度，不能据此给门保真度设普适上限。</li>
+        <li>QPT 保真度受 SPAM 严重低估（95.9%），最终以 RB 为准；RB 需改造为 LRB 才能计入泄漏。</li>
+      </ul>
+      <h3 style="margin-top:16px">🔧 硬件取舍</h3>
+      <p class="sm"><b>可省</b>：耦合器读出谐振器（失真标定用比特传感器即可，只需保留它做泄漏表征）。
+      <b>建议保留</b>：AWG 侧实时预补偿、dc 低通（&lt;1.6 kHz + π）、μ 金属双层屏蔽。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 原文附录导航 ============================== -->
+<section id="appendix">
+  <div class="sec-h"><span class="sec-n">16</span><h2>原文附录结构导航（A–L）</h2></div>
+  <p class="sec-p">复现时按此索引回查原文；括号内为本文对应章节。</p>
+
+  <div class="grid3">
+    <div class="card tight"><h4>A · Fabrication</h4><p class="sm">Ta 薄膜 135 nm、CF₄ 刻蚀、Dolan 桥 Al 结、TSV（Bosch）。高相干工艺（→ §13）。</p></div>
+    <div class="card tight"><h4>B · Measurement Setup</h4><p class="sm">SHFQC/HDAWG8/GS200/FS725、IMPA、HEMT、diplexer、滤波与屏蔽（→ §05 链路）。</p></div>
+    <div class="card tight"><h4>C · Device Parameters</h4><p class="sm">Table I/II + <b>5 步参数搜索流程</b>（→ §03）。器件设计核心。</p></div>
+    <div class="card tight"><h4>D · Toy Model of the DTC</h4><p class="sm">p/m 模式推导、耦合系数 g<sub>ip</sub>/g<sub>im</sub>、idle 点解析（→ §01）。</p></div>
+    <div class="card tight"><h4>E · Qubit Coherence</h4><p class="sm">T₁/T₂ᴿ/T₂ᴱ 随磁通 + 17.5 h 稳定性（→ §13）。</p></div>
+    <div class="card tight"><h4>F · State Discrimination</h4><p class="sm">单发 IQ + k-means + assignment matrix（→ §13）。</p></div>
+    <div class="card tight"><h4>G · Single-Qubit Gate Fidelities</h4><p class="sm">RB（单独/同时）+ 非相干误差分解（→ §06）。</p></div>
+    <div class="card tight"><h4>H · Z-Pulse Distortion</h4><p class="sm">短期/长期序列 + {a<sub>k</sub>,τ<sub>k</sub>}（→ §07）。<b>复现核心</b></p></div>
+    <div class="card tight"><h4>I · CZ-Gate Optimization by RL</h4><p class="sm">JAZZ-N / JAZZ2-N + Slepian + PPO + VZ（→ §08/09）。<b>复现核心</b></p></div>
+    <div class="card tight"><h4>J · Quantum Process Tomography</h4><p class="sm">36×36 + 最大似然 PTM（→ §10）。</p></div>
+    <div class="card tight"><h4>K · CZ-Gate Fidelity</h4><p class="sm">LRB 模型推导 K1–K26（→ §11）。<b>复现核心</b></p></div>
+    <div class="card tight"><h4>L · Incoherent Error</h4><p class="sm">1/f 磁通噪声 + Kraus 通道 + T<sub>eff</sub>（→ §12）。<b>复现核心</b></p></div>
+  </div>
+</section>
+
+</details>
+</main>
+
+<footer><div class="wrap">
+  <p><b>资料来源</b>：Rui Li et al., <i>Realization of High-Fidelity CZ Gate Based on a Double-Transmon Coupler</i>,
+  Phys. Rev. X <b>14</b>, 041050 (2024)，含附录 H（Z 脉冲失真）、I（CZ 优化）、J（QPT）、K（保真度）、L（非相干误差）。
+  公式编号沿用原文以便回查：正文 Eq.(1)–(15)，附录 Eq.(H1)、(I1)–(I5)、(D15)–(D16)、(K1)–(K26)、(L1)–(L17)。</p>
+  <p>本页为学习/复现用的图解整理稿；图中曲线为按论文所述趋势重绘的示意图，引用数值请以原文为准。</p>
+</div></footer>
+
+<div class="top" id="topBtn">↑ 返回顶部</div>
+
+<script>
+(function(){
+"use strict";
+document.addEventListener('click',function(e){
+  var a=e.target.closest('a[href^="#"]');if(!a)return;
+  var target=document.getElementById(a.getAttribute('href').slice(1));
+  var ref=document.getElementById('research');
+  if(target && ref && ref.contains(target)){ref.open=true;}
+});
+if(location.hash){var target=document.getElementById(location.hash.slice(1));var ref=document.getElementById('research');if(target && ref && ref.contains(target)){ref.open=true;}}
+
+const NS="http://www.w3.org/2000/svg";
+function $(id){return document.getElementById(id);}
+/* SVG 内不能用 <sub>/<sup>：HTML 解析器会视其为 breakout 标签而提前关闭 <svg>，
+   导致后续元素错位。统一转成 <tspan>。 */
+function fixSub(html){
+  return String(html)
+    .replace(/<sub>/g,'<tspan dy="3" font-size="0.78em">')
+    .replace(/<\/sub>/g,'</tspan>')
+    .replace(/<sup>/g,'<tspan dy="-3.5" font-size="0.78em">')
+    .replace(/<\/sup>/g,'</tspan>');
+}
+function set(id,html){
+  var e=$(id); if(!e) return;
+  var h=fixSub(html);
+  if(h.indexOf('</svg>')<0) h+='</svg>';
+  e.innerHTML=h;
+}
+
+/* ---------- tiny svg helpers ---------- */
+function txt(x,y,s,cls,anchor){return '<text x="'+x+'" y="'+y+'" class="'+(cls||'lbl')+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>'+s+'</text>';}
+function line(x1,y1,x2,y2,cls,dash){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" class="'+(cls||'axis')+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';}
+function rect(x,y,w,h,cls,fill,extra){
+  return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" class="'+(cls||'axis')+'" fill="'+(fill||'none')+'" '+(extra||'')+'/>';}
+function path(d,cls,extra){return '<path d="'+d+'" class="'+(cls||'axis')+'" fill="none" '+(extra||'')+'/>';}
+function circle(cx,cy,r,cls,fill,extra){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" class="'+(cls||'axis')+'" fill="'+(fill||'none')+'" '+(extra||'')+'/>';}
+function openSvg(w,h,cls){return '<svg viewBox="0 0 '+w+' '+h+'" class="chart '+(cls||'')+'" xmlns="'+NS+'">';}
+function pts(a){return a.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');}
+function smoothPath(a){
+  var d='M'+a[0][0].toFixed(1)+','+a[0][1].toFixed(1);
+  for(var i=1;i<a.length-1;i++){
+    var xc=(a[i][0]+a[i+1][0])/2, yc=(a[i][1]+a[i+1][1])/2;
+    d+=' Q'+a[i][0].toFixed(1)+','+a[i][1].toFixed(1)+' '+xc.toFixed(1)+','+yc.toFixed(1);
+  }
+  var n=a.length-1; d+=' L'+a[n][0].toFixed(1)+','+a[n][1].toFixed(1);
+  return d;
+}
+
+/* =================================================================
+   1. DTC device schematic
+   ================================================================= */
+function drawDevice(){
+  var s=openSvg(960,470);
+  s+='<defs><linearGradient id="gq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#164e63"/><stop offset="1" stop-color="#0e7490"/></linearGradient>'+
+     '<linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>';
+
+  /* readout stubs */
+  s+=line(95,236,95,300,'axis','none');
+  s+=rect(82,300,26,44,'axis','#334155');
+  s+=txt(95,320,'λ/4','lbl2','middle');
+  s+=txt(95,362,'Q1 读出 8.184 GHz','lbl2','middle');
+  s+=line(865,236,865,300,'axis','none');
+  s+=rect(852,300,26,44,'axis','#334155');
+  s+=txt(865,320,'λ/4','lbl2','middle');
+  s+=txt(865,362,'Q2 读出 8.261 GHz','lbl2','middle');
+  s+=line(480,470-165,480,470-110,'axis','none');
+  s+=rect(466,470-112,28,40,'axis','#475569');
+  s+=txt(480,470-88,'C3/C4 共用谐振器','lbl2','middle');
+  s+=txt(480,470-72,'8.101 GHz · 仅能区分 |00⟩ vs |xx⟩','lbl2','middle');
+
+  /* qubits */
+  s+=circle(95,200,40,'axis','url(#gq)');
+  s+=txt(95,197,'Q1','ttl','middle'); s+=txt(95,213,'4.314 GHz','lbl','middle');
+  s+=circle(865,200,40,'axis','url(#gq)');
+  s+=txt(865,197,'Q2','ttl','middle'); s+=txt(865,213,'4.778 GHz','lbl','middle');
+
+  /* couplers */
+  s+=circle(300,200,38,'axis','url(#gc)');
+  s+=txt(300,197,'C3','ttl','middle'); s+=txt(300,213,'JJ3','lbl','middle');
+  s+=circle(660,200,38,'axis','url(#gc)');
+  s+=txt(660,197,'C4','ttl','middle'); s+=txt(660,213,'JJ4','lbl','middle');
+
+  /* capacitive couplings */
+  s+=line(135,200,262,200,'axis');
+  s+=line(175,190,175,210,'axis','#f8fafc'); s+=line(180,190,180,210,'axis','#f8fafc');
+  s+=txt(198,182,'C₁₃ = 5.73 fF','anno','middle');
+  s+=line(698,200,825,200,'axis');
+  s+=line(740,190,740,210,'axis','#f8fafc'); s+=line(745,190,745,210,'axis','#f8fafc');
+  s+=txt(762,182,'C₂₄ = 5.77 fF','anno','middle');
+
+  /* stray Q1-Q2 */
+  s+=path('M95,244 C300,300 660,300 865,244','axis','#64748b');
+  s+=txt(480,296,'C₁₂ = 0.04 fF（寄生电容，可忽略）','lbl2','middle');
+
+  /* superconducting loop */
+  s+=path('M300,162 L300,120 L455,120 L625,120 L660,162','axis','#fbbf24','stroke-width="2.5"');
+  s+=rect(305,128,44,14,'axis','#fbbf24'); s+=txt(327,140,'JJ3','lbl2','middle');
+  s+=rect(443,113,44,14,'axis','#fbbf24'); s+=txt(465,120,'JJ5','lbl2','middle');
+  s+=rect(612,128,44,14,'axis','#fbbf24'); s+=txt(634,140,'JJ4','lbl2','middle');
+  /* loop interior dashed */
+  s+=rect(320,142,340,126,'axis','none','stroke="#fbbf24" stroke-dasharray="5 5" opacity="0.45"');
+  /* flux in */
+  s+=circle(425,205,16,'axis','#fbbf24','none','stroke-width="1.6"');
+  s+=line(425,195,425,215,'axis','#fbbf24','stroke-width="1.6"');
+  s+=line(416,205,434,205,'axis','#fbbf24','stroke-width="1.6"');
+  s+=txt(425,238,'外磁通 φ<sub>ex</sub>','anno','middle');
+  /* loop area label */
+  s+=txt(620,170,'超导环 (loop)','lbl2','middle');
+  s+=txt(620,186,'φ<sub>ex</sub>/2π 可调 0~0.5','lbl2','middle');
+
+  /* dc coil arrow */
+  s+=line(480,470-100,480,404,'axis','#34d399','none');
+  s+=path('M480,404 l-7,-14 l14,0 z','axis','#34d399');
+  s+=txt(500,412,'超导线圈 dc（GS200）→ idle bias point','lbl2','start');
+  /* fast flux line */
+  s+=line(300,238,214,330,'axis','#fb923c','none');
+  s+=circle(268,266,9,'axis','#fb923c','none','stroke-width="1.6"');
+  s+=txt(210,348,'快速磁通线（Zs）','lbl','start');
+  s+=txt(210,364,'Z 脉冲 → DTC 环路','lbl2','start');
+  /* XY lines */
+  s+=line(60,200,55,200,'axis','#22d3ee');
+  s+=line(60,120,60,200,'axis','#22d3ee');
+  s+=txt(30,116,'XY 驱动 (shfqc)','lbl2','start');
+  s+=line(900,200,905,200,'axis','#22d3ee');
+  s+=line(900,120,900,200,'axis','#22d3ee');
+  s+=txt(872,116,'XY 驱动 (shfqc)','lbl2','start');
+
+  /* legend */
+  s+=rect(560,58,240,42,'axis','#131f3d','#131f3d','opacity="0.9"');
+  s+=circle(575,78,7,'axis','#22d3ee','#22d3ee'); s+=txt(588,82,'数据比特 Q1/Q2','lbl','start');
+  s+=circle(575,95,7,'axis','#a78bfa','#a78bfa'); s+=txt(588,99,'耦合器 C3/C4','lbl','start');
+
+  set('svgDevice',s);
+}
+
+/* =================================================================
+   2. toy model
+   ================================================================= */
+function drawToy(){
+  var s=openSvg(900,300);
+  var box=function(x,y,w,h,c,l1,l2){
+    return rect(x,y,w,h,'axis',c,'rx="9"')+
+      txt(x+w/2,y+h/2-2,l1,'ttl','middle')+ (l2?txt(x+w/2,y+h/2+14,l2,'lbl','middle'):'');
+  };
+  s+=box(40,60,120,56,'#0e7490','Q1','4.314 GHz');
+  s+=box(40,170,120,56,'#0e7490','Q2','4.778 GHz');
+  s+=box(700,60,150,56,'#7c3aed','P（定频 transmon）','5.495 GHz');
+  s+=box(700,170,150,56,'#7c3aed','M（CSFQ, 可调）','5.373 GHz');
+  s+=line(160,88,700,88,'axis','#64748b');
+  s+=line(160,198,700,198,'axis','#64748b');
+  s+=txt(400,80,'+ g₁p','anno','middle');
+  s+=txt(400,190,'− g₂m','anno','middle');
+  s+=path('M160,88 L700,170','axis','#475569','stroke-dasharray="4 4"');
+  s+=path('M160,198 L700,88','axis','#475569','stroke-dasharray="4 4"');
+  s+=txt(280,140,'+ g₁m','anno','middle');
+  s+=txt(600,140,'+ g₂p','anno','middle');
+  s+=circle(440,140,34,'axis','#22d3ee','none','stroke-width="1.6"');
+  s+=txt(440,146,'g<sub>eff</sub>','anno','middle');
+  s+=txt(450,258,'g₁g₂ 项相减：m 模式频率扫过 p 模式频率时 g<sub>eff</sub> 由负转正并过零','lbl2','start');
+  set('svgToy',s);
+}
+
+/* =================================================================
+   3. energy spectrum + ZZ
+   ================================================================= */
+function drawSpectrum(){
+  var W=560,H=380, x0=62,x1=W-22,y0=34,y1=H-46;
+  var P0=0.25,P1=0.52, E0=4.0,E1=6.0;
+  var sx=function(p){return x0+(p-P0)/(P1-P0)*(x1-x0);};
+  var sy=function(e){return y1-(e-E0)/(E1-E0)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,20,'激发态能量（GHz）','ttl','start');
+  /* grid + axes */
+  for(var e=4.0;e<=6.01;e+=0.5){
+    s+=line(x0,sy(e),x1,sy(e),'grid');
+    s+=txt(x0-8,sy(e)+4,e.toFixed(1),'lbl2','end');
+  }
+  for(var p=0.25;p<=0.521;p+=0.05){
+    s+=line(sx(p),y0,sx(p),y1,'grid');
+    s+=txt(sx(p),y1+16,p.toFixed(2),'lbl2','middle');
+  }
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  s+=txt((x0+x1)/2,H-14,'外磁通 φ<sub>ex</sub>/2π','lbl','middle');
+
+  var Q1=function(p){return 4.314;};
+  var Q2=function(p){return 4.778+0.055*Math.exp(-Math.pow((p-0.425)/0.055,2));};
+  var P =function(p){return 5.495-0.035*Math.exp(-Math.pow((p-0.265)/0.04,2));};
+  var M =function(p){
+    if(p<=0.309) return 5.37 + 4.0*(0.309-p);
+    return 5.37 - 5.6*(p-0.309)*(1+0.30*Math.exp(-Math.pow((p-0.42)/0.05,2)));
+  };
+  function curve(f,col,lab,dy){
+    var a=[],p;
+    for(p=P0;p<=P1+1e-9;p+=0.005){a.push([sx(p),sy(f(p))]);}
+    s+='<polyline points="'+pts(a)+'" fill="none" stroke="'+col+'" stroke-width="2.4"/>';
+    if(lab){
+      var ly=sy(f(0.50))+(dy||0);
+      ly=Math.max(y0+14,Math.min(y1-6,ly));
+      s+=txt(x1-8,ly,lab,'lbl','end');
+    }
+  }
+  curve(M,'#fb7185','m 模式 (CSFQ)',-18);
+  curve(P,'#a78bfa','p 模式 (定频)',-10);
+  curve(Q2,'#22d3ee','Q2',-6);
+  curve(Q1,'#34d399','Q1',22);
+
+  /* vertical guides */
+  s+=line(sx(0.309),y0,sx(0.309),y1,'axis','#22d3ee','stroke-width="1.4" stroke-dasharray="5 4"');
+  s+=txt(sx(0.309),y0+14,'idle 0.309','anno','middle');
+  s+=line(sx(0.47),y0,sx(0.47),y1,'axis','#fbbf24','stroke-width="1.4" stroke-dasharray="5 4"');
+  s+=txt(sx(0.47),y0+14,'max ZZ 0.47','anno','middle');
+  /* anticrossing annotations */
+  s+=circle(sx(0.42),sy(Q2(0.42)),9,'axis','none','fill="none" stroke="#fbbf24" stroke-width="1.6"');
+  s+=txt(sx(0.42),sy(Q2(0.42))+26,'强耦合/避免交叉','anno','middle');
+  s+=circle(sx(0.27),sy(P(0.27)),9,'axis','none','fill="none" stroke="#fbbf24" stroke-width="1.6"');
+  s+=txt(sx(0.27),sy(P(0.27))-14,'m ↔ p','anno','middle');
+  set('svgSpec',s);
+}
+
+function drawZZ(){
+  var W=560,H=380,x0=62,x1=W-22,y0=34,y1=H-46;
+  var P0=0.28,P1=0.52, Z0=-90,Z1=12;
+  var sx=function(p){return x0+(p-P0)/(P1-P0)*(x1-x0);};
+  var sy=function(z){return y1-(z-Z0)/(Z1-Z0)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,20,'ZZ 相互作用 ζ/2π（MHz）','ttl','start');
+  for(var z=-80;z<=10;z+=20){
+    s+=line(x0,sy(z),x1,sy(z),'grid');
+    s+=txt(x0-8,sy(z)+4,z+'','lbl2','end');
+  }
+  for(var p=0.28;p<=0.521;p+=0.04){
+    s+=line(sx(p),y0,sx(p),y1,'grid');
+    s+=txt(sx(p),y1+16,p.toFixed(2),'lbl2','middle');
+  }
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  s+=line(x0,sy(0),x1,sy(0),'axis','#334155');
+  s+=txt((x0+x1)/2,H-14,'外磁通 φ<sub>ex</sub>/2π','lbl','middle');
+
+  var zeta=function(p){
+    return -78*Math.exp(-Math.pow((p-0.465)/0.052,2))
+           -25*Math.exp(-Math.pow((p-0.40)/0.05,2));
+  };
+  var a=[],p;
+  for(p=P0;p<=P1+1e-9;p+=0.004){a.push([sx(p),sy(zeta(p))]);}
+  s+='<polyline points="'+pts(a)+'" fill="none" stroke="#22d3ee" stroke-width="2.6"/>';
+  /* area fill */
+  s+='<polygon points="'+pts(a)+' '+sx(P1)+','+sy(0)+' '+sx(P0)+','+sy(0)+'" fill="#22d3ee" opacity="0.08"/>';
+
+  /* markers */
+  s+=circle(sx(0.47),sy(zeta(0.47)),5,'axis','#fb7185','#fb7185');
+  s+=txt(sx(0.47)-4,sy(zeta(0.47))-14,'ζ<sub>max</sub> = −82.5 MHz','anno','end');
+  s+=circle(sx(0.309),sy(zeta(0.309)),5,'axis','#fbbf24','#fbbf24');
+  s+=txt(sx(0.309)+10,sy(zeta(0.309))+22,'ζ<sub>min</sub> = −6.3 kHz','anno','start');
+  /* zoom bubble */
+  s+=circle(sx(0.309),sy(zeta(0.309)),16,'axis','none','stroke="#fbbf24" stroke-dasharray="3 3"');
+  s+=txt(sx(0.47),sy(zeta(0.47))+24,'on/off ≈ 1.3×10⁴','anno','middle');
+  set('svgZZ',s);
+}
+
+function drawSearch(){
+  var W=560,H=340,x0=64,x1=W-24,y0=34,y1=H-52;
+  /* log x: |ζmin| in kHz (1..1000); y: |ζmax| in MHz (10..200) */
+  var lx0=Math.log10(1), lx1=Math.log10(1000);
+  var sx=function(v){return x0+(Math.log10(v)-lx0)/(lx1-lx0)*(x1-x0);};
+  var sy=function(v){return y1-(v-10)/(200-10)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,20,'参数权衡：残余 ZZ vs 最大 ZZ（示意）','ttl','start');
+  /* axes */
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [1,10,100,1000].forEach(function(v){
+    s+=line(sx(v),y0,sx(v),y1,'grid');
+    s+=txt(sx(v),y1+16,v+'','lbl2','middle');
+  });
+  [50,100,150,200].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-8,sy(v)+4,v+'','lbl2','end');
+  });
+  s+=txt((x0+x1)/2,H-12,'残余 ZZ |ζ<sub>min</sub>| (kHz，对数) → 越小越好','lbl','middle');
+  s+=txt(x0-52,y0-8,'|ζ<sub>max</sub>| (MHz)','lbl','start');
+  s+=txt(x0-52,y0+8,'越大越好','lbl2','start');
+  /* ideal region (top-left) */
+  s+=rect(x0+2,y0+2,sx(20)-x0-2,sy(60)-y0-2,'axis','none','stroke="#34d399" stroke-dasharray="5 4" opacity="0.8"');
+  s+=txt(sx(3)+4,sy(180),'理想区','lbl','start');
+  s+=txt(sx(3)+4,sy(165),'低残余 + 高速度','lbl2','start');
+  /* trade-off frontier */
+  var frontier=[],v;
+  for(v=1;v<=1000;v*=1.18){ frontier.push([sx(v),sy(Math.min(195,12+Math.sqrt(v)*8))]); }
+  s+='<polyline points="'+pts(frontier)+'" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 4"/>';
+  s+=txt(sx(220),sy(120),'权衡边界','lbl','middle');
+  s+=txt(sx(220),sy(108),'（速度 ↔ 残余）','lbl2','middle');
+  /* candidate cloud */
+  var cand=[
+    [2,42],[3,55],[4,38],[5,66],[6,52],[7,74],[8,61],[10,88],[12,72],[14,95],
+    [16,84],[18,112],[22,96],[26,124],[30,108],[35,136],[42,118],[50,150],[58,132],[70,164],
+    [85,142],[110,172],[140,155],[180,182],[240,162],[320,190],[450,175],[620,196],
+    [15,58],[28,80],[45,104],[75,128],[120,148]
+  ];
+  cand.forEach(function(p){ s+=circle(sx(p[0]),sy(p[1]),3.2,'axis','#7c8bb0','#7c8bb0','opacity="0.65"'); });
+  /* paper value */
+  s+=circle(sx(6.3),sy(82.5),11,'axis','none','stroke="#fb7185" stroke-width="1.6"');
+  s+=circle(sx(6.3),sy(82.5),4.2,'axis','#fb7185','#fb7185');
+  s+=txt(sx(6.3)+16,sy(82.5)-6,'本文取值','anno','start');
+  s+=txt(sx(6.3)+16,sy(82.5)+10,'6.3 kHz / 82.5 MHz','lbl2','start');
+  /* direction arrows */
+  s+=txt(x1-6,y0+16,'← 越靠左越好','lbl2','end');
+  s+=txt(x1-6,y0+32,'↑ 越靠上越好','lbl2','end');
+  set('svgSearch',s);
+}
+
+/* =================================================================
+   4. JAZZ sequence
+   ================================================================= */
+function drawJazz(){document.getElementById('svgJazz').innerHTML='<div class="seq"><svg viewBox="0 0 900 210" role="img" aria-label="两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同"><title>两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同</title><text x="12" y="47" fill="#e8eefc" font-size="16">Q1</text><line x1="95" y1="42" x2="840" y2="42" stroke="#496184"/><rect x="260" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="300.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2</text><rect x="370" y="23" width="160" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="450.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">等待 τ</text><rect x="580" y="23" width="120" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="640.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">π/2(α)</text><rect x="760" y="23" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="47" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="112" fill="#e8eefc" font-size="16">Q2</text><line x1="95" y1="107" x2="840" y2="107" stroke="#496184"/><rect x="100" y="88" width="130" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="165.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">制备 c=0/1</text><rect x="260" y="88" width="440" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="480.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">保持 c（同一总时长）</text><rect x="760" y="88" width="80" height="38" rx="6" fill="#12354b" stroke="#22d3ee"/><text x="800.0" y="112" text-anchor="middle" fill="#e8eefc" font-size="15">读出</text><text x="12" y="175" fill="#93a4c8" font-size="14">两组独立实验：c=0 与 c=1；所有时序、驱动频率和分析约定相同</text></svg></div>';}
+
+function drawDist(){
+  var W=900,H=330;
+  var s=openSvg(W,H);
+  var x0=90,x1=440,y0=60,y1=250;
+  var T=40; /* ns-ish units */
+  var sx=function(t){return x0+t/T*(x1-x0);};
+  var sy=function(a){return y1-a*(y1-y0);};
+  s+=txt(x0,32,'理想 Z 方波','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  s+='<path d="M'+sx(0)+','+y1+' L'+sx(0)+','+sy(1)+' L'+sx(18)+','+sy(1)+' L'+sx(18)+','+y1+' Z" fill="#fb923c" opacity="0.25" stroke="#fb923c" stroke-width="2"/>';
+  s+=txt(sx(9),sy(1)-10,'幅度 A','lbl2','middle');
+  s+=txt(sx(9),y1+16,'18 ns','lbl2','middle');
+  /* transient */
+  var X0=520,X1=880;
+  var sx2=function(t){return X0+t/T*(X1-X0);};
+  var sy2=function(a){return y1-a*(y1-y0);};
+  s+=txt(X0,32,'断电后的残余相位（多指数）','ttl','start');
+  s+=line(X0,y0,X0,y1,'axis'); s+=line(X0,y1,X1,y1,'axis');
+  var comps=[
+    {tau:0.35,amp:0.55,col:'#fb7185',lab:'τ=603.3 ns, a=−0.0104'},
+    {tau:0.10,amp:0.35,col:'#22d3ee',lab:'τ=79.45 ns, a=−0.0137'},
+    {tau:0.02,amp:0.20,col:'#a78bfa',lab:'τ=13.60 ns, a=+0.00525'}
+  ];
+  var sum=[],t;
+  for(t=0;t<=T;t+=0.4){
+    var v=0;
+    comps.forEach(function(c){v+=c.amp*Math.exp(-t/c.tau);});
+    sum.push([sx2(t),sy2(v)]);
+  }
+  s+='<polyline points="'+pts(sum)+'" fill="none" stroke="#fbbf24" stroke-width="2.8"/>';
+  comps.forEach(function(c,i){
+    var a=[];
+    for(t=0;t<=T;t+=0.6){a.push([sx2(t),sy2(c.amp*Math.exp(-t/c.tau))]);}
+    s+='<polyline points="'+pts(a)+'" fill="none" stroke="'+c.col+'" stroke-width="1.4" stroke-dasharray="4 3"/>';
+    s+=txt(X1-4,sy2(c.amp)-4-i*0,c.lab,'lbl2','end');
+  });
+  s+=txt((X0+X1)/2,y1+16,'Z 脉冲结束后的时间 t →','lbl2','middle');
+  s+=txt((x0+x1)/2,y1+16,'→','lbl2','middle');
+  /* model formula */
+  s+=txt(x0,300,'φ(t) = φ₀ · Σₖ aₖ [ e<sup>−t/τₖ</sup> − e<sup>−(t+τ<sub>pulse</sub>)/τₖ</sup> ]  →  拟合 {aₖ, τₖ} 回代 AWG 做预畸变','lbl','start');
+  set('svgDist',s);
+}
+
+/* =================================================================
+   6. JAZZ-N sequences
+   ================================================================= */
+function drawJazzN(){
+  var W=900,H=250;
+  var s=openSvg(W,H);
+  /* left: JAZZ-N */
+  s+=txt(30,28,'JAZZ-N（N = 4k+1）—— 标 Z 幅度','ttl','start');
+  var y=70;
+  var seq=['X<sub>π/2</sub>','Z','X<sub>π</sub>','Z','…','X<sub>π/2</sub>','M'];
+  var cols=['#0e7490','#7c3aed','#0e7490','#7c3aed',null,'#0e7490','#334155'];
+  var x=50;
+  seq.forEach(function(g,i){
+    if(g==='…'){s+=txt(x+10,y+6,'⋯','ttl','middle'); x+=26; return;}
+    if(g==='Z'){s+=rect(x,y-18,34,36,'axis','#7c3aed','rx="6"');}
+    else{s+=rect(x,y-18,52,36,'axis',cols[i],'rx="6"');}
+    s+=txt(x+(g==='Z'?17:26),y+5,g,'ttl','middle');
+    x+=(g==='Z'?40:60);
+    if(i===3){s+=txt(x-4,y+28,'重复 N 次','lbl2','middle');}
+  });
+  s+=txt(50,130,'θ<sub>CZ</sub> = π ⟺ P<sub>|1⟩</sub> = (1−cos[(2k+1)θ<sub>CZ</sub>])/2','lbl','start');
+  s+=txt(50,152,'单比特旋转自动抵消 → 与 VZ 无关；N=9,41,101 逐级细化幅度','lbl2','start');
+
+  /* right: JAZZ2-N */
+  s+=txt(480,28,'JAZZ₂-N（N = 2k）—— RL 的 reward','ttl','start');
+  var y2=70, x2=480;
+  [['X<sub>π/2</sub>',56],['X<sub>π/2</sub>',56],['Z',34],['X<sub>π</sub>',56],['X<sub>π</sub>',56],['Z',34],['…',26],['X<sub>π/2</sub>',56],['X<sub>π/2</sub>',56],['M',36]].forEach(function(g,i){
+    if(g[0]==='…'){s+=txt(x2+12,y2+6,'⋯','ttl','middle'); x2+=26; return;}
+    s+=rect(x2,y2-18,g[1],36,'axis',(g[0]==='Z'?'#7c3aed':(g[0]==='M'?'#334155':'#0e7490')),'rx="6"');
+    s+=txt(x2+g[1]/2,y2+5,g[0],'ttl','middle');
+    x2+=g[1]+6;
+  });
+  s+=txt(480,130,'P<sub>|00⟩</sub> = (1−cos[(2k+1)θ<sub>CZ</sub>])/2  ⟶ 1 当 θ<sub>CZ</sub>→π','lbl','start');
+  s+=txt(480,152,'两端各加 π/2：对"形状"更敏感、对单门误差更鲁棒','lbl2','start');
+  set('svgJazzN',s);
+}
+
+/* =================================================================
+   7. pulse shape + FFT + RL training
+   ================================================================= */
+function drawShape(){
+  var W=900,H=360;
+  var s=openSvg(W,H);
+  var x0=70,x1=W-140,y0=40,y1=190,y2=310;
+  var sx=function(t){return x0+t*(x1-x0);};
+  var sy=function(a){return y1-a*(y1-y0);};
+  s+=txt(x0,26,'Z 脉冲幅度（归一化）','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  for(var f=0;f<=1.001;f+=0.25){
+    s+=line(x0,sy(f),x1,sy(f),'grid');
+    s+=txt(x0-8,sy(f)+4,f.toFixed(2),'lbl2','end');
+  }
+  var slp=function(t){ /* teardrop: fast rise, slow fall */
+    var tr=0.34, tf=0.66;
+    var rise = t<tr ? 1-Math.exp(-3.2*t/tr) : 1;
+    var fall = t<tr ? 1 : Math.exp(-2.6*(t-tr)/tf);
+    return rise*fall;
+  };
+  var opt=function(t){
+    var tr=0.36, tf=0.64;
+    var rise = t<tr ? 1-Math.exp(-3.0*t/tr) : 1;
+    var fall = t<tr ? 1 : Math.exp(-2.2*(t-tr)/tf);
+    return rise*fall*(1+0.035*Math.sin(2*Math.PI*11*t)+0.02*Math.sin(2*Math.PI*19*t+1.1)+0.015*Math.sin(2*Math.PI*26*t+0.4));
+  };
+  var a=[],b=[],t;
+  for(t=0;t<=1;t+=0.01){a.push([sx(t),sy(slp(t))]);b.push([sx(t),sy(opt(t))]);}
+  s+='<polyline points="'+pts(a)+'" fill="none" stroke="#38bdf8" stroke-width="2.4"/>';
+  s+='<polyline points="'+pts(b)+'" fill="none" stroke="#fb7185" stroke-width="2.4"/>';
+  s+=txt(x1-4,sy(slp(0.62))-6,'Slepian（初值）','lbl','end');
+  s+=txt(x1-4,sy(opt(0.62))+18,'RL 优化后','lbl','end');
+  s+=txt(x0+6,y1+16,'0 ns','lbl2','start');
+  s+=txt(x1+4,y1+16,'48 ns','lbl2','start');
+  s+=txt(x0+30,y0+14,'亮点：两端各 2 ns 零 padding；20 控制点 + 2 GSa/s 三次样条插值','lbl2','start');
+
+  /* FFT panel */
+  s+=txt(x0,232,'差值 FFT（优化后 − Slepian）','ttl','start');
+  s+=line(x0,y2,x1,y2,'axis');
+  s+=line(x0,y2,x0,y2-64,'axis');
+  var freqs=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  var amps=[0.30,0.55,0.42,0.28,0.20,0.16,0.14,0.13,0.12,0.11,0.19,0.16,0.10,0.09,0.08,0.07];
+  var bw=(x1-x0)/freqs.length*0.6;
+  freqs.forEach(function(k,i){
+    var h=amps[i]*70;
+    s+=rect(x0+ (i+0.5)*((x1-x0)/freqs.length) - bw/2, y2-h, bw, h,'axis','#a78bfa','#a78bfa','opacity="'+(0.55+0.03*i)+'"');
+    s+=txt(x0+(i+0.5)*((x1-x0)/freqs.length), y2+14, k,'lbl2','middle');
+  });
+  s+=txt(x1,y2+14,'频率序号','lbl2','end');
+  s+=txt(x0-8,y2-66,'幅值','lbl2','start');
+  s+=txt(x0+6,y2+34,'agent 注入特定频率分量：补偿残余短瞬态失真 / 抑制 anticrossing 高能级跃迁（推测）','lbl2','start');
+  set('svgShape',s);
+}
+
+function drawRL(){
+  var W=900,H=300;
+  var s=openSvg(W,H);
+  var x0=70,x1=W-30,y0=34,y1=H-44;
+  var N=150;
+  var sx=function(e){return x0+e/N*(x1-x0);};
+  var sy=function(f){return y1-(f-0.3)/(1.0-0.3)*(y1-y0);};
+  s+=txt(x0,20,'序列保真度（reward）','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [0.4,0.6,0.8,1.0].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-8,sy(v)+4,v.toFixed(1),'lbl2','end');
+  });
+  [0,50,100,150].forEach(function(e){
+    s+=line(sx(e),y0,sx(e),y1,'grid');
+    s+=txt(sx(e),y1+16,e+'','lbl2','middle');
+  });
+  s+=txt((x0+x1)/2,y1+32,'PPO 训练 epoch','lbl','middle');
+  function ser(col,f,dash){
+    var a=[],e;
+    for(e=0;e<=N;e+=3){a.push([sx(e),sy(f(e))]);}
+    s+='<polyline points="'+pts(a)+'" fill="none" stroke="'+col+'" stroke-width="2.4"'+(dash?' stroke-dasharray="5 4"':'')+'/>';
+  }
+  function band(e,f,jit){
+    var up=[],dn=[],i;
+    for(i=0;i<=N;i+=5){
+      up.push([sx(i),sy(Math.min(0.999,f(i)+jit*(1-i/N)+0.02*Math.abs(Math.sin(i/7))))]);
+      dn.push([sx(i),sy(Math.max(0.3,f(i)-jit*(1-i/N)-0.02*Math.abs(Math.cos(i/5))))]);
+    }
+    s+='<polygon points="'+pts(up)+' '+pts(dn.reverse())+'" fill="#22d3ee" opacity="0.12"/>';
+  }
+  var fCZ=function(e){return 0.55+0.44*(1-Math.exp(-e/22));};
+  var fVZ=function(e){return 0.52+0.46*(1-Math.exp(-e/26));};
+  band(0,fCZ,0.16);
+  ser('#22d3ee',fCZ,false);
+  ser('#fb7185',fVZ,true);
+  s+=txt(x1-4,sy(fCZ(150))-8,'CZ 相位（JAZZ₂-N）','lbl','end');
+  s+=txt(x1-4,sy(fVZ(150))+18,'VZ 相位（两比特 RB）','lbl','end');
+  s+=txt(x0+6,y0+16,'≈100 epoch 后全部尝试波形都贴近最优；单机无 GPU ≈2 h','lbl2','start');
+  s+=circle(sx(100),sy(fCZ(100)),6,'axis','#fbbf24','none');
+  s+=txt(sx(100)+10,sy(fCZ(100))-8,'收敛','anno','start');
+  set('svgRL',s);
+}
+
+/* =================================================================
+   8. VZ calibration
+   ================================================================= */
+function drawVZ(){
+  var W=900,H=290;
+  var s=openSvg(W,H);
+  /* sequence: left half */
+  s+=txt(30,30,'VZ 标定序列（测 Q1 时 Q2 保持 |0⟩）','ttl','start');
+  var y=80,x=40;
+  [['π/2',60],['Z',34],['Z',34],['⋯',26],['Z',34],['Tomo',70]].forEach(function(g,i){
+    if(g[0]==='⋯'){s+=txt(x+12,y+6,'⋯','ttl','middle');x+=26;return;}
+    s+=rect(x,y-18,g[1],36,'axis',(g[0]==='Z'?'#7c3aed':(g[0]==='Tomo'?'#334155':'#0e7490')),'rx="6"');
+    s+=txt(x+g[1]/2,y+5,g[0],'ttl','middle');
+    x+=g[1]+6;
+  });
+  s+=txt(40,130,'每次 Z 给 Q<sub>i</sub> 叠加态 θ<sub>i</sub>/2 相对相位，重复 N 次后做相位层析','lbl2','start');
+  s+=txt(40,152,'线性拟合累积相位 N·θ<sub>i</sub>/2 → θ<sub>i</sub>','lbl2','start');
+  /* linear fit plot: right half */
+  var x0=470,x1=860,y0=70,y1=250;
+  var N2=20;
+  var sx=function(n){return x0+n/N2*(x1-x0);};
+  var sy=function(p){return y1-(p+400)/800*(y1-y0);};
+  s+=txt(x0,44,'相位累积 vs 重复次数 N（示意）','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [-400,-200,0,200,400].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-8,sy(v)+4,v+'','lbl2','end');
+  });
+  var a1=[],a2=[];
+  for(var n=0;n<=N2;n++){
+    var p1=139.33*n/10 + (n>0?(Math.sin(n*3.1)*14):0);
+    var p2=-102.05*n/10 + (n>0?(Math.cos(n*2.7)*12):0);
+    a1.push([sx(n),sy(p1)]); a2.push([sx(n),sy(p2)]);
+  }
+  s+='<polyline points="'+pts(a1)+'" fill="none" stroke="#22d3ee" stroke-width="2.2"/>';
+  s+='<polyline points="'+pts(a2)+'" fill="none" stroke="#fb7185" stroke-width="2.2"/>';
+  var f1=[],f2=[];
+  for(var m=0;m<=N2;m+=1){f1.push([sx(m),sy(139.33*m/10)]);f2.push([sx(m),sy(-102.05*m/10)]);}
+  s+='<polyline points="'+pts(f1)+'" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="5 4" opacity="0.6"/>';
+  s+='<polyline points="'+pts(f2)+'" fill="none" stroke="#fb7185" stroke-width="1" stroke-dasharray="5 4" opacity="0.6"/>';
+  s+=txt(x1-4,sy(139.33*2)-6,'Q1：139.33°/周期','lbl','end');
+  s+=txt(x1-4,sy(-102.05*2)+18,'Q2：−102.05°/周期','lbl','end');
+  s+=txt((x0+x1)/2,y1+16,'N','lbl','middle');
+  s+=txt(x0-40,70,'相位(°)','lbl2','start');
+  set('svgVZ',s);
+}
+
+/* =================================================================
+   9. PTM heatmaps
+   ================================================================= */
+function drawPTM(){
+  var labels=['II','IX','IY','IZ','XI','XX','XY','XZ','YI','YX','YY','YZ','ZI','ZX','ZY','ZZ'];
+  var ideal=[]; var i,j;
+  for(i=0;i<16;i++){ideal.push(new Array(16).fill(0));}
+  function put(r,c,v){ideal[r][c]=v;}
+  /* PTM: rows are output Paulis, columns are input Paulis. */
+  put(0,0,1);put(3,3,1);put(12,12,1);put(15,15,1);
+  [[1,13],[2,14],[4,7],[8,11],[5,10]].forEach(function(pair){
+    put(pair[0],pair[1],1);put(pair[1],pair[0],1);
+  });
+  put(6,9,-1);put(9,6,-1);
+
+  var W=900,cell=17,pad=46;
+  var H=pad*2+16*cell+10;
+  var s=openSvg(W,H);
+  function clone(m){return m.map(function(r){return r.slice();});}
+  var panels=[{x:30,title:'理想 CZ PTM（结构）',data:clone(ideal)},{x:480,title:'实验重建示意（含泄漏/SPAM）',data:clone(ideal)}];
+  panels.forEach(function(pn,pi){
+    /* jitter experimental */
+    if(pi===1){
+      var i,j;
+      for(i=0;i<16;i++)for(j=0;j<16;j++){
+        var v=pn.data[i][j];
+        if(v!==0){pn.data[i][j]=v*(0.88+0.1*Math.random());}
+      }
+      /* leakage: nonzero first row small values */
+      for(j=1;j<16;j++){pn.data[0][j]=(Math.random()-0.5)*0.05;}
+    }
+    s+=txt(pn.x,24,pn.title,'ttl','start');
+    for(i=0;i<16;i++){
+      s+=txt(pn.x-6,pad+i*cell+cell/2+4,labels[i],'lbl2','end');
+      s+=txt(pn.x+i*cell+cell/2,pad-8,labels[i],'lbl2','middle');
+      s+=line(pn.x+i*cell,pad,pn.x+i*cell,pad+16*cell,'grid');
+    }
+    for(i=0;i<16;i++){
+      for(j=0;j<16;j++){
+        var v=pn.data[i][j];
+        var col='#0a1330';
+        if(v>0.02) col='rgba(56,189,248,'+(0.25+0.75*Math.min(1,v))+')';
+        else if(v<-0.02) col='rgba(251,113,133,'+(0.25+0.75*Math.min(1,-v))+')';
+        else if(pi===1 && Math.abs(v)>0.005) col='rgba(251,191,36,0.45)';
+        s+=rect(pn.x+j*cell+1,pad+i*cell+1,cell-2,cell-2,'axis',col,'rx="2"');
+      }
+    }
+    s+=rect(pn.x,pad,16*cell,16*cell,'axis','none','stroke="#3b4a70" stroke-width="1.2"');
+    s+=txt(pn.x+16*cell/2,pad+16*cell+18,'输出 Pauli ↓ / 输入 Pauli →','lbl2','middle');
+    if(pi===0){
+      s+=rect(pn.x+330,pad+40,120,26,'axis','#131f3d','#131f3d','rx="6"');
+      s+=circle(pn.x+344,pad+53,6,'axis','#38bdf8','#38bdf8'); s+=txt(pn.x+356,pad+57,'+1','lbl','start');
+      s+=circle(pn.x+344,pad+80,6,'axis','#fb7185','#fb7185'); s+=txt(pn.x+356,pad+84,'−1','lbl','start');
+    }else{
+      s+=txt(pn.x+330,pad+50,'黄色小格 = 泄漏','lbl2','start');
+      s+=txt(pn.x+330,pad+70,'首行非零 ⟂ trace-preserving','lbl2','start');
+    }
+  });
+  set('svgPTM',s);
+}
+
+/* =================================================================
+   10. RB curves
+   ================================================================= */
+function drawRB(){
+  var W=900,H=290,x0=70,x1=W-30,y0=34,y1=H-44;
+  var M=120;
+  var sx=function(m){return x0+m/M*(x1-x0);};
+  var sy=function(p){return y1-(p-0.95)/(1.001-0.95)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,20,'P<sub>X1</sub>(m) = A + B·λ<sub>L</sub><sup>m</sup>（泄漏 RB）','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [0.96,0.97,0.98,0.99,1.0].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-8,sy(v)+4,v.toFixed(2),'lbl2','end');
+  });
+  [0,30,60,90,120].forEach(function(m){
+    s+=line(sx(m),y0,sx(m),y1,'grid');
+    s+=txt(sx(m),y1+16,m+'','lbl2','middle');
+  });
+  var A=0.9905,B=0.0095,lL=0.99955;
+  var srb=[],irb=[];
+  var Ai=0.9892,Bi=0.0108,liL=0.9993;
+  for(var m=0;m<=M;m++){
+    srb.push([sx(m),sy(A+B*Math.pow(lL,m))]);
+    irb.push([sx(m),sy(Ai+Bi*Math.pow(liL,m))]);
+  }
+  s+='<polyline points="'+pts(srb)+'" fill="none" stroke="#38bdf8" stroke-width="2.4"/>';
+  s+='<polyline points="'+pts(irb)+'" fill="none" stroke="#fb7185" stroke-width="2.4"/>';
+  s+=txt(x1-4,sy(0.991)-6,'SRB（参考）','lbl','end');
+  s+=txt(x1-4,sy(0.988)+16,'IRB（夹 CZ）','lbl','end');
+  s+=line(x0,sy(A),x1,sy(A),'axis','#22d3ee','stroke-dasharray="4 4"');
+  s+=txt(x1-4,sy(A)-6,'平台 ≈ A','lbl2','end');
+  set('svgLRB',s);
+
+  /* second panel */
+  var H2=260;
+  var y0b=34,y1b=H2-44;
+  var sy2=function(p){return y1b-(p-0.02)/(0.26-0.02)*(y1b-y0b);};
+  var s2=openSvg(W,H2);
+  s2+=txt(x0,20,'[P<sub>id</sub> − P<sub>X1</sub>/d](m) = C·λ<sub>r</sub><sup>m</sup> + D —— 单指数','ttl','start');
+  s2+=line(x0,y0b,x0,y1b,'axis'); s2+=line(x0,y1b,x1,y1b,'axis');
+  [0.05,0.1,0.2,0.26].forEach(function(v){
+    s2+=line(x0,sy2(v),x1,sy2(v),'grid');
+    s2+=txt(x0-8,sy2(v)+4,v.toFixed(2),'lbl2','end');
+  });
+  [0,30,60,90,120].forEach(function(m){
+    s2+=line(sx(m),y0b,sx(m),y1b,'grid');
+    s2+=txt(sx(m),y1b+16,m+'','lbl2','middle');
+  });
+  s2+=txt((x0+x1)/2,H2-14,'两比特 Clifford 数 m','lbl','middle');
+  var C=0.25,lr=0.9991;
+  var c1=[],c2=[];
+  var C2=0.252,lr2=0.9982;
+  for(var m2=0;m2<=M;m2++){
+    c1.push([sx(m2),sy2(C*Math.pow(lr,m2)+0.002)]);
+    c2.push([sx(m2),sy2(C2*Math.pow(lr2,m2)+0.002)]);
+  }
+  s2+='<polyline points="'+pts(c1)+'" fill="none" stroke="#38bdf8" stroke-width="2.4"/>';
+  s2+='<polyline points="'+pts(c2)+'" fill="none" stroke="#fb7185" stroke-width="2.4"/>';
+  s2+=txt(x1-4,sy2(C)+16,'SRB','lbl','end');
+  s2+=txt(x1-4,sy2(C2)+16,'IRB','lbl','end');
+  s2+=txt(x0+6,y0b+16,'λ<sub>r</sub><sup>IRB</sup>/λ<sub>r</sub><sup>SRB</sup> 比 → r<sub>CZ</sub> = 0.090%','lbl2','start');
+  set('svgRB',s2);
+}
+
+/* =================================================================
+   11. error budget donut + gate length + stability
+   ================================================================= */
+function drawBudget(){
+  var W=900,H=330;
+  var s=openSvg(W,H);
+  var cx=230,cy=170,r=110,ri=70;
+  /* total infidelity 0.10% : rD 0.090 + L 0.027 */
+  var total=0.10;
+  var segs=[
+    {v:0.090,col:'#fb7185',lab:'去极化型/非相干 r<sub>D</sub> = 0.090%'},
+    {v:0.027,col:'#fbbf24',lab:'泄漏 L₁/d = 0.027%'}
+  ];
+  function arc(r0,r1,a0,a1,col){
+    var p0=[cx+r1*Math.cos(a0),cy+r1*Math.sin(a0)];
+    var p1=[cx+r1*Math.cos(a1),cy+r1*Math.sin(a1)];
+    var p2=[cx+r0*Math.cos(a1),cy+r0*Math.sin(a1)];
+    var p3=[cx+r0*Math.cos(a0),cy+r0*Math.sin(a0)];
+    return '<path d="M'+p0[0].toFixed(1)+','+p0[1].toFixed(1)+
+           ' A'+r1+','+r1+' 0 0 1 '+p1[0].toFixed(1)+','+p1[1].toFixed(1)+
+           ' L'+p2[0].toFixed(1)+','+p2[1].toFixed(1)+
+           ' A'+r0+','+r0+' 0 0 0 '+p3[0].toFixed(1)+','+p3[1].toFixed(1)+
+           ' Z" fill="'+col+'"/>';
+  }
+  var a0=-Math.PI/2;
+  segs.forEach(function(g){
+    var a1=a0+g.v/total*Math.PI*2;
+    s=s+arc(ri,r,a0,a1,g.col);
+    var mid=(a0+a1)/2, lx=cx+(ri+22)*Math.cos(mid), ly=cy+(ri+22)*Math.sin(mid);
+    s+=circle(lx,ly,4,'axis','#0a1129','#0a1129');
+    a0=a1;
+  });
+  s+=circle(cx,cy,ri-2,'axis','#0a1129','#0a1129');
+  s+=txt(cx,cy-4,'infidelity','lbl2','middle');
+  s+=txt(cx,cy+22,'0.10 %','ttl','middle');
+  /* legend */
+  var ly=80;
+  segs.forEach(function(g){
+    s+=rect(430,ly,14,14,'axis',g.col,g.col,'rx="3"');
+    s+=txt(452,ly+12,g.lab,'lbl','start');
+    ly+=26;
+  });
+  s+=rect(430,ly,14,14,'axis','#334155','#334155','rx="3"');
+  s+=txt(452,ly+12,'相干相位误差 &lt;1.5° ⇒ &lt;0.01%（可忽略）','lbl','start');
+  ly+=30;
+  s+=txt(430,ly+12,'总保真度 F̄ = 99.90 ± 0.01 %','ttl','start'); ly+=28;
+  s+=txt(430,ly+12,'12 h 内 6 次测量 r<sub>CZ</sub> 全部 &lt; 0.1%','lbl2','start');
+  set('svgBudget',s);
+}
+
+function drawGateLen(){
+  var W=900,H=330,x0=70,x1=W-40,y0=40,y1=H-60;
+  var t0=30,t1=340;
+  var sx=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
+  var sy=function(e){return y1-Math.min(1,e/0.5)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,22,'门长扫描（示意）：泄漏 / 去极化误差','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [0,0.1,0.2,0.3,0.4,0.5].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-8,sy(v)+4,v.toFixed(1),'lbl2','end');
+  });
+  [40,80,120,160,200,240,280,320].forEach(function(t){
+    s+=line(sx(t),y0,sx(t),y1,'grid');
+    s+=txt(sx(t),y1+16,t+'','lbl2','middle');
+  });
+  s+=txt((x0+x1)/2,H-6,'CZ 门长 t<sub>gate</sub> (ns)','lbl','middle');
+  /* linear model line */
+  var l0=function(t){return 0.0007+(2/5)*t/23900*100;}; /* % */
+  var a=[];
+  [48,100,160,220,280,320].forEach(function(t){a.push([sx(t),sy(l0(t))]);});
+  s+='<polyline points="'+pts(a)+'" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 4"/>';
+  /* leakage curve */
+  var leak=[40,48,64,80,100,128,160,200,320];
+  var leakv=[0.10,0.027,0.015,0.012,0.010,0.014,0.020,0.032,0.062];
+  var lp=[],lc=[];
+  leak.forEach(function(t,i){
+    if(i===0){
+      s+=txt(sx(t)-6,sy(leakv[i])-10,'40 ns：RL/带宽失效 → 泄漏 ~0.1%','anno','end');
+      s+='<line x1="'+sx(t)+'" y1="'+sy(leakv[i])+'" x2="'+sx(t)+'" y2="'+(sy(leakv[i])+26)+'" stroke="#fb923c" stroke-width="1"/>';
+      s+=txt(sx(t)+6,sy(leakv[i])+22,'离群点(×)','lbl2','start');
+    }
+    lp.push([sx(t),sy(leakv[i])]);
+    lc.push([sx(t),sy(l0(t))]);
+  });
+  s+='<polyline points="'+pts(lp)+'" fill="none" stroke="#fbbf24" stroke-width="2.2"/>';
+  leak.forEach(function(t,i){
+    var isOut=(i===0);
+    if(isOut){
+      s+='<path d="M'+(sx(t)-5)+','+(sy(leakv[i])-5)+' L'+(sx(t)+5)+','+(sy(leakv[i])+5)+' M'+(sx(t)+5)+','+(sy(leakv[i])-5)+' L'+(sx(t)-5)+','+(sy(leakv[i])+5)+'" stroke="#fb923c" stroke-width="2"/>';
+    }else{
+      s+=circle(sx(t),sy(leakv[i]),5,'axis','#fbbf24','#0a1129','stroke-width="2"');
+    }
+  });
+  /* rD points */
+  var rdt=[40,48,64,100,160,200,320];
+  var rdv=[0.30,0.090,0.13,0.20,0.30,0.36,0.47];
+  rdt.forEach(function(t,i){
+    s+=circle(sx(t),sy(rdv[i]),5,'axis','#fb7185','#0a1129','stroke-width="2"');
+  });
+  s+=circle(sx(40),sy(0.30),5,'axis','#fb923c','#0a1129','stroke-width="2"');
+  s+=path('M'+(sx(40)-5)+','+(sy(0.30)-5)+' L'+(sx(40)+5)+','+(sy(0.30)+5)+' M'+(sx(40)+5)+','+(sy(0.30)-5)+' L'+(sx(40)-5)+','+(sy(0.30)+5),'axis','#fb923c');
+  /* chosen gate length */
+  s+=line(sx(48),y0,sx(48),y1,'axis','#34d399','stroke-width="1.6" stroke-dasharray="5 4"');
+  s+=txt(sx(48)+6,y0+16,'选定 48 ns','anno','start');
+  /* legend */
+  s+=circle(x0+20,y1+34,5,'axis','#fb7185','#0a1129','stroke-width="2"');
+  s+=txt(x0+32,y1+38,'r<sub>D</sub><sup>CZ</sup>（去极化/非相干）','lbl','start');
+  s+=circle(x0+270,y1+34,5,'axis','#fbbf24','#0a1129','stroke-width="2"');
+  s+=txt(x0+282,y1+38,'泄漏 L₁<sup>CZ</sup>','lbl','start');
+  s+='<line x1="'+(x0+440)+'" y1="'+(y1+34)+'" x2="'+(x0+470)+'" y2="'+(y1+34)+'" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 4"/>';
+  s+=txt(x0+478,y1+38,'线性模型 (2/5)·t/T<sub>eff</sub> + r₀','lbl','start');
+  set('svgGateLen',s);
+}
+
+function drawStab(){
+  var W=440,H=230,x0=48,x1=W-18,y0=30,y1=H-52;
+  var t0=0,t1=12;
+  var sx=function(t){return x0+(t-t0)/(t1-t0)*(x1-x0);};
+  var sy=function(e){return y1-(e-0.015)/(0.12-0.015)*(y1-y0);};
+  var s=openSvg(W,H);
+  s+=txt(x0,18,'12 h 内 r<sub>CZ</sub> 与泄漏（示意）','ttl','start');
+  s+=line(x0,y0,x0,y1,'axis'); s+=line(x0,y1,x1,y1,'axis');
+  [0.03,0.05,0.075,0.1].forEach(function(v){
+    s+=line(x0,sy(v),x1,sy(v),'grid');
+    s+=txt(x0-6,sy(v)+4,v.toFixed(3),'lbl2','end');
+  });
+  [0,4,8,12].forEach(function(t){
+    s+=line(sx(t),y0,sx(t),y1,'grid');
+    s+=txt(sx(t),y1+16,t+'','lbl2','middle');
+  });
+  s+=txt((x0+x1)/2,H-8,'时间 (h)','lbl','middle');
+  var err=[0.088,0.086,0.092,0.089,0.084,0.090];
+  var lk=[0.031,0.030,0.033,0.029,0.028,0.031];
+  var i;
+  for(i=0;i<6;i++){
+    var t=i*12/5;
+    s+=line(sx(t),sy(err[i]-0.006),sx(t),sy(err[i]+0.006),'axis','#fb7185');
+    s+=line(sx(t),sy(lk[i]-0.004),sx(t),sy(lk[i]+0.004),'axis','#fbbf24');
+    s+=circle(sx(t),sy(err[i]),4.5,'axis','#fb7185','#fb7185');
+    s+=circle(sx(t),sy(lk[i]),4.5,'axis','#fbbf24','#fbbf24');
+  }
+  var av=[],la=[];
+  for(i=0;i<=12;i++){av.push([sx(i),sy(0.088)]);la.push([sx(i),sy(0.030)]);}
+  s+='<polyline points="'+pts(av)+'" fill="none" stroke="#fb7185" stroke-width="1" stroke-dasharray="6 4" opacity="0.7"/>';
+  s+='<polyline points="'+pts(la)+'" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6 4" opacity="0.7"/>';
+  s+=txt(x1-4,sy(0.088)-8,'r<sub>CZ</sub> 平均 0.09%','lbl','end');
+  s+=txt(x1-4,sy(0.030)-8,'L₁ 平均 0.030%','lbl','end');
+  set('svgStab',s);
+}
+
+/* boot */
+document.addEventListener('DOMContentLoaded',function(){
+  try{
+    drawDevice(); drawToy(); drawSpectrum(); drawSearch(); drawZZ(); drawJazz();
+    drawDist(); drawJazzN(); drawShape(); drawRL(); drawVZ(); drawPTM();
+    drawRB(); drawBudget(); drawGateLen(); drawStab();
+  }catch(e){
+    if(window.console) console.log(e);
+  }
+  /* 阅读进度条 */
+  var bar=document.getElementById('progress');
+  /* 返回顶部 */
+  var topBtn=document.getElementById('topBtn');
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    if(bar) bar.style.width=(h>0?(window.scrollY/h*100):0)+'%';
+    if(topBtn) topBtn.classList.toggle('on', window.scrollY>600);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+  if(topBtn) topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+  /* 导航高亮当前板块 */
+  var links=[].slice.call(document.querySelectorAll('nav a.nl'));
+  var map={};
+  links.forEach(function(a){
+    var id=a.getAttribute('href'); if(id&&id.charAt(0)==='#') map[id.slice(1)]=a;
+  });
+  if(window.IntersectionObserver){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          links.forEach(function(a){a.classList.remove('active');});
+          var a=map[en.target.id];
+          if(a) a.classList.add('active');
+        }
+      });
+    },{rootMargin:'-45% 0px -50% 0px'});
+    document.querySelectorAll('main section[id]').forEach(function(sec){ io.observe(sec); });
+  }
+  /* 公式卡片：点击 .eq 复制纯文本 */
+  document.querySelectorAll('.eq').forEach(function(el){
+    el.style.cursor='copy';
+    el.addEventListener('click',function(){
+      var t=(el.innerText||'').trim();
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t); }
+      var old=el.style.outline;
+      el.style.outline='1px solid #22d3ee';
+      setTimeout(function(){ el.style.outline=old||'none'; },400);
+    });
+  });
+});
+})();
+</script>
+</body>
+</html>
